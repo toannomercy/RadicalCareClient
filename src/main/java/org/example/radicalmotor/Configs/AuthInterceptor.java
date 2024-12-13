@@ -29,9 +29,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                // Log thông tin cookie
-                logger.info("Cookie Name: {}, Cookie Value: {}", cookie.getName(), cookie.getValue());
-
                 if ("token".equals(cookie.getName())) {
                     String token = cookie.getValue();
                     if (jwtUtils.validateToken(token)) {

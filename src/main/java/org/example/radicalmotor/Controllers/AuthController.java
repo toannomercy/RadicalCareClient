@@ -88,10 +88,6 @@ public class AuthController {
         }
     }
 
-
-
-
-
     // Hiển thị form đăng ký
     @GetMapping("/register")
     public String showRegisterForm(Model model) {

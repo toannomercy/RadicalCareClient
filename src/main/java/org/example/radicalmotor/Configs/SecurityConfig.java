@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .tokenUri("https://oauth2.googleapis.com/token")
                 .userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
                 .userNameAttributeName("sub")
-                .redirectUri("http://localhost:8081/login/oauth2/code/google")
+                .redirectUri("http://localhost:8080/login/oauth2/code/google")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .build();
 
@@ -62,6 +62,7 @@ public class SecurityConfig {
                                         "/auth/forgotPassword/**",
                                         "/auth/resetPassword/**").permitAll()
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                         .requestMatchers("/products").permitAll()
                         .requestMatchers(("/vehicles")).permitAll()
                         .requestMatchers("/services").permitAll()

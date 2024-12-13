@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout::head}">
+    <title>Index</title>
+</head>
+<body>
+<th:block th:replace="~{layout::header}"></th:block>
+<!-- Slideshow Start -->
+<th:block th:replace="fragments/slider :: slider"></th:block>
+
+<!--Vehicle Image-->
+<div class="row">
+    <div class="col-md-9 me-4">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div th:each="vehicle : ${vehicles}" class="col-md-4 mb-4" data-aos="zoom-in">
+                <a th:href="@{/vehicles/detail/{id}(id=${vehicle.chassisNumber})}">
+                    <div class="card-vehicle card h-100 zoom-in" style="min-width: 35vh;">
+                        <div class="card-body">
+                            <img th:src="${vehicle.imageUrls[0]}" class="card-img-bottom img-fluid" alt="Vehicle Image">
+                        </div>
+                        <div class="card-footer d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-title mb-0 text-uppercase text-secondary" th:text="${vehicle.vehicleName}"></h6>
+                                <p class="card-text mb-0 text-uppercase text-dark" th:text="${vehicle.segment}"></p>
+                            </div>
+                            <div>
+                                <h6 class="card-text mb-0 text-primary" th:text="${vehicle.price}"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Phân trang -->
+<div class="pagination justify-content-center mt-4">
+    <ul class="pagination">
+        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+            <a class="page-link" th:href="@{/vehicles(page=${currentPage - 1}, size=${9})}">Previous</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
+            <a class="page-link" th:href="@{/vehicles(page=${i}, size=${9})}" th:text="${i + 1}"></a>
+        </li>
+        <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+            <a class="page-link" th:href="@{/vehicles(page=${currentPage + 1}, size=${9})}">Next</a>
+        </li>
+    </ul>
+</div>
+
+
+<th:block th:replace="~{layout::footer}"></th:block>
+<th:block th:replace="~{layout::script}"></th:block>
+<script>
+    AOS.init({
+        duration: 1000,
+    });
+
+    function toggleFilter() {
+        const filterSection = document.getElementById("filterSection");
+        if (filterSection.style.display === "none" || filterSection.style.display === "") {
+            filterSection.style.display = "block";
+        } else {
+            filterSection.style.display = "none";
+        }
+    }
+
+    function clearFilters() {
+        const filterForm = document.getElementById("filterForm");
+        if (filterForm) {
+            filterForm.reset();
+        }
+        window.location.href = '/products';
+    }
+
+    function applyFilters() {
+        $("#minPrice").val($("#minPriceInput").val());
+        $("#maxPrice").val($("#maxPriceInput").val());
+    }
+
+    $(function () {
+        $("#slider-range").slider({
+            range: true,
+            min: 0,
+            max: 200000,
+            values: [5000, 10000],
+            slide: function (event, ui) {
+                $("#minPriceInput").val(ui.values[0]);
+                $("#maxPriceInput").val(ui.values[1]);
+                $("#minPrice").val(ui.values[0]);
+                $("#maxPrice").val(ui.values[1]);
+            }
+        });
+
+        $("#minPriceInput").val($("#slider-range").slider("values", 0));
+        $("#maxPriceInput").val($("#slider-range").slider("values", 1));
+        $("#minPrice").val($("#slider-range").slider("values", 0));
+        $("#maxPrice").val($("#slider-range").slider("values", 1));
+
+        $("#minPriceInput").on("input", function () {
+            var minValue = $(this).val();
+            var maxValue = $("#maxPriceInput").val();
+            $("#slider-range").slider("values", [minValue, maxValue]);
+            $("#minPrice").val(minValue);
+        });
+
+        $("#maxPriceInput").on("input", function () {
+            var minValue = $("#minPriceInput").val();
+            var maxValue = $(this).val();
+            $("#slider-range").slider("values", [minValue, maxValue]);
+            $("#maxPrice").val(maxValue);
+        });
+
+        $("#searchString").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/products/autocomplete",
+                    data: {term: request.term},
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 2
+        });
+    });
+</script>
+</body>
+</html>

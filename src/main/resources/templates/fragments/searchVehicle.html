@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<style>
+    .list-group-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .list-group-item input[type="checkbox"] {
+        margin-right: 10px;
+    }
+</style>
+<div th:fragment="searchVehicle(menus, vehicleTypes, priceRanges)" style="min-width: 100px"
+     class="col-md-2 mx-4 sticky-search" data-aos="zoom-in">
+    <!-- Search Form -->
+    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
+          th:action="@{/products}" method="get" style="width:100% !important;">
+        <div class="input-group" >
+            <input id="searchString" name="searchString" type="text" class="form-control bg-light border-0 small"
+                   placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+            <button style="background-color: rgb(216, 19, 36) !important; border-color: rgb(216, 19, 36) !important"
+                    class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </form>
+
+    <!-- Filter Button -->
+    <button style="width:100% !important;" class="btn btn-secondary mt-1" onclick="toggleFilter()">Filter</button>
+
+    <!-- Filter Section -->
+    <div id="filterSection" class="filter-section" style="display: none">
+        <!-- Vehicle Type Filter -->
+        <h4 class="text-center bg-primary text-white py-2">Vehicle Type</h4>
+        <form id="filterForm" th:action="@{/products}" method="get">
+            <div class="form-group">
+                <div th:each="vehicleType : ${vehicleTypes}" class="custom-checkbox">
+                    <label>
+                        <input type="checkbox" name="vehicleTypes" th:value="${vehicleType.vehicleTypeName}" th:id="${vehicleType.vehicleTypeName}">
+                        <span class="checkmark"></span>
+                        <span th:text="${vehicleType.vehicleTypeName}"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Price Range Filter -->
+            <h4 class="text-center bg-primary text-white py-2 mt-3">Price Range</h4>
+            <div class="px-3">
+                <div class="price-range-inputs">
+                    <input type="number" id="minPriceInput" class="price-range-input" placeholder="₫ From" min="0">
+                    <div class="price-range-separator"></div>
+                    <input type="number" id="maxPriceInput" class="price-range-input" placeholder="₫ To" min="0">
+                </div>
+                <div id="slider-range" class="mt-3"></div>
+                <input type="hidden" id="minPrice" name="minPrice">
+                <input type="hidden" id="maxPrice" name="maxPrice">
+            </div>
+
+            <!-- Apply Button -->
+            <button type="submit" class="btn btn-primary mt-3" style="width:100%;" onclick="applyFilters()">Apply
+                Filters
+            </button>
+        </form>
+
+        <!-- Clear Filters Button -->
+        <button  class="btn btn-secondary mt-2" style="width:100%;" onclick="clearFilters()">Clear Filters</button>
+    </div>
+</div>
+</body>
+</html>

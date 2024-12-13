@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout::head}">
+    <title>Login</title>
+</head>
+<body>
+<th:block th:replace="~{layout::header}"></th:block>
+<div class="container mt-5 py-5 h-100">
+    <div class="row justify-content-center align-items-center h-100">
+        <div class="col-12 col-lg-6 col-md-8 col-xl-5">
+            <div class="card shadow" style="border-radius: 1rem;">
+                <div class="card-body p-5 text-center">
+                    <h3>Login to <strong class="mb-4 text-primary">RadicalMotor</strong></h3>
+                    <form id="loginForm">
+                        <div id="errorMessage" class="alert alert-danger d-none"></div>
+                        <div class="form-group mb-4">
+                            <input type="text" id="username" class="form-control" placeholder="Username" required>
+                        </div>
+                        <div class="form-group mb-4">
+                            <input type="password" id="password" class="form-control" placeholder="Password" required>
+                        </div>
+                        <div class="d-grid gap-2 form-action">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
+                        </div>
+                    </form>
+                    <hr class="my-4">
+                    <a href="/oauth2/authorization/google" class="btn btn-outline-danger btn-block">
+                        Login with Google
+                    </a>
+                    <p class="mt-3">Don't have an account?
+                        <a class="text-info text-center" th:href="@{/auth/register}">Register here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="~{layout::footer}"></th:block>
+
+<!-- Nhúng JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Ngăn form tự động submit
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                showError('Please fill in all fields.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include', // Gửi cookie
+                    body: JSON.stringify({ username, password }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`Welcome ${data.fullName}!`);
+                    window.location.href = '/'; // Redirect sau khi đăng nhập thành công
+                } else {
+                    const errorData = await response.json();
+                    showError(errorData.message || 'Login failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
+                showError('An unexpected error occurred. Please try again.');
+            }
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('d-none');
+        }
+    });
+</script>
+</body>
+</html>

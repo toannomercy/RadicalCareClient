@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{adminLayout :: css}">
+    <title>Cost Table</title>
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <ul th:replace="~{adminLayout :: sidebar}"></ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div th:replace="~{adminLayout :: navbar}"></div>
+            <div class="container-fluid">
+                <!--Content-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <nav class="navbar navbar-light">
+                            <div class="container-fluid">
+                                <h2 class="text-dark">List CostTable</h2>
+                                <div class="d-flex justify-content-end mb-2">
+                                    <a href="/admin/addCost">
+                                        <button class="btn btn-success"><i class="bi bi-plus-circle"></i> Add</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+                <table class="table table-striped">
+
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Id</th>
+                        <th>Date Created</th>
+                        <th>Base Cost</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="costTable : ${costTables}">
+                        <td th:text="${costTable.getCostId()}"></td>
+                        <td th:text="${costTable.getDateCreated()}"></td>
+                        <td th:text="${costTable.getBaseCost()}"></td>
+                        <td colspan="2">
+                            <a th:href="@{/admin/editCostTable/{id}(id=${costTable.costId})}" class="btn btn-primary">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <form th:action="@{/admin/deleteCostTable/{id}(id=${costTable.costId})}" method="post" style="display:inline;" onsubmit="return confirmDelete(this);">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!--End Content-->
+            </div>
+        </div>
+        <footer th:replace="~{adminLayout :: footer}"></footer>
+    </div>
+</div>
+<th:block th:replace="~{adminLayout :: scroll}"></th:block>
+<div th:replace="~{adminLayout :: logout}"></div>
+<th:block th:replace="~{adminLayout :: script}"></th:block>
+<script>
+    function confirmDelete(form) {
+        if (confirm("Are you sure you want to delete this CostID?")) {
+            return true;
+        }
+        return false;
+    }
+</script>
+</body>
+</html>

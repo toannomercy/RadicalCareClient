@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout::head}">
+    <meta charset="UTF-8">
+    <title>Detail</title>
+</head>
+<body>
+<th:block th:replace="~{layout::header}"></th:block>
+<!-- Slideshow Start -->
+<th:block th:replace="fragments/slider :: slider"></th:block>
+<div class="row">
+    <!-- Search Vehicle-->
+    <th:block
+            th:replace="fragments/searchVehicle :: searchVehicle(menus=${menus}, vehicleTypes=${vehicleTypes}, priceRanges=${priceRanges})"></th:block>
+    <div class="col-md-9 me-4" data-aos="fade-up">
+        <div class="row">
+            <div class="col-md-7 mb-4">
+                <div class="product-image">
+                    <div th:each="image : ${images}">
+                        <img th:src="@{${image.imageUrl}}" alt="Vehicle Image" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 mb-4">
+                <h2 class="text-secondary" th:text="${product.vehicleName}"></h2>
+                <p class="text-secondary"><strong>Giá chỉ từ:</strong></p>
+                <h4 class="text-primary" th:text="${formattedPrice} + ' VND'"></h4>
+                <p class="text-secondary"><strong>Màu sắc:</strong></p>
+                <div class="color-options">
+                    <span class="color red"></span>
+                    <span class="color silver"></span>
+                    <span class="color black"></span>
+                </div>
+                <br>
+                <p>Với KTM 390 DUKE 2024 hoàn toàn mới, mọi cung đường đều biến thành trường đua gymkhana đỉnh cao của
+                    riêng bạn. Sở hữu khả năng linh hoạt vượt trội, trọng lượng nhẹ, cùng sức mạnh bùng nổ, KTM 390 DUKE
+                    mới sẵn sàng chinh phục mọi khúc cua. Được trang bị các công nghệ hỗ trợ người lái tân tiến, khung
+                    xe hoàn toàn mới, hệ thống treo có thể điều chỉnh và diện mạo hầm hố đầy lôi cuốn, KTM 390 DUKE 2024
+                    đã sẵn sàng để thống trị mọi cung đường.</p>
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-6 text-center">
+                        <img class="img-fluid" style="max-width: 20vh;" src="/img/ktm-logo.png" alt="Radical Motor">
+                    </div>
+                    <div class="col-md-6 text-center" data-aos="fade-up">
+                        <form th:action="@{/add-to-cart}" method="post">
+                            <input type="hidden" name="chassisNumber" th:value="${product.chassisNumber}">
+                            <input type="hidden" name="quantity" value="1">
+                            <input type="hidden" name="vehicleName" th:value="${product.vehicleName}">
+                            <input type="hidden" name="baseCost" th:value="${product.costId.baseCost}">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-cart4"></i> MUA NGAY
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <br>
+        <div class="row" data-aos="fade-up">
+            <h1 class="text-center text-secondary">01. SẴN SÀNG BỨT PHÁ!</h1>
+            <br>
+            <br>
+            <div class="col-md-6 mb-4">
+                <h3>ĐỊNH HÌNH PHONG CÁCH RIÊNG</h3>
+                <h4 class="text-primary">Kiểm soát hoàn toàn</h4>
+                <p>Với hệ thống phuộc trước WP APEX 43 mm dạng open cartridge có khả năng tùy chỉnh lực nén và độ hồi,
+                    cùng giảm xóc sau WP APEX với piston riêng biệt cho phép điều chỉnh độ hồi và tải trước, chinh phục
+                    cung đường nhựa yêu thích hay lướt qua những khúc cua ôm sát đánh dấu bằng cone trở nên dễ dàng hơn
+                    bao giờ hết. Chiếc KTM 390 DUKE này giúp bạn tìm được sự cân bằng lý tưởng giữa sự thoải mái và độ
+                    bám đường.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <img src="/img/phongcach.png" alt="KTM 390 Duke 2024" class="img-fluid">
+            </div>
+        </div>
+        <hr>
+        <br>
+        <div class="row" data-aos="fade-up">
+            <h1 class="text-center text-secondary">02. 3, 2, 1 - PHÓNG!</h1>
+            <br>
+            <br>
+            <div class="col-md-4 mb-4">
+                <img src="/img/dongco.png" alt="Dong Co" class="img-fluid">
+            </div>
+            <div class="col-md-6 mb-4">
+                <h3>SỨC MẠNH ÁP ĐẢO</h3>
+                <h4 class="text-primary">Động cơ</h4>
+                <p>Không chỉ được trang bị khối động cơ LC4c tân tiến nhất, KTM 390 DUKE 2024 còn được tăng cường sức
+                    mạnh với dung tích 399cc, mạnh mẽ hơn, tăng tốc mượt mà hơn và tổng thể nhẹ hơn trước. Với bề dày
+                    kinh nghiệm được tích lũy qua năm tháng trong việc chinh phục phân khúc 400cc, KTM 390 DUKE 2024
+                    tiếp tục được tinh chỉnh hộp số, tối ưu hóa đầu xi-lanh và sẵn sàng đáp ứng tiêu chuẩn khí thải
+                    EURO5.2. Và hiển nhiên, KTM 390 Duke 2024 luôn trong trạng thái “READY TO RACE".</p>
+            </div>
+        </div>
+        <hr>
+        <br>
+        <div class="row" data-aos="fade-up">
+            <h1 class="text-center text-secondary">03. PHONG CÁCH VÀ CHỨC NĂNG</h1>
+            <br>
+            <br>
+            <div class="col-md-6 mb-4">
+                <h3>SOI SÁNG MÀN ĐÊM</h3>
+                <h4 class="text-primary">Hệ thống đèn led</h4>
+                <p>Xé tan màn đêm, tất cả các dòng xe KTM DUKE 2024 đều được trang bị đèn LED cực mạnh ở phía trước và
+                    sau. Những bộ đèn không chỉ hoạt động hiệu quả trong đêm tối mà còn đem lại khả năng chiếu sáng vượt
+                    trội khi đi qua những đoạn đường đông đúc hoặc sương mù.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <img src="/img/led.png" alt="led" class="img-fluid">
+            </div>
+        </div>
+        <br>
+    </div>
+</div>
+<th:block th:replace="~{layout::footer}"></th:block>
+<th:block th:replace="~{layout::script}"></th:block>
+<script>
+    AOS.init({
+        duration: 1000,
+    });
+
+    function toggleFilter() {
+        const filterSection = document.getElementById("filterSection");
+        if (filterSection.style.display === "none" || filterSection.style.display === "") {
+            filterSection.style.display = "block";
+        } else {
+            filterSection.style.display = "none";
+        }
+    }
+
+    function clearFilters() {
+        const filterForm = document.getElementById("filterForm");
+        if (filterForm) {
+            filterForm.reset();
+        }
+        window.location.href = '/products';
+    }
+
+    function applyFilters() {
+        $("#minPrice").val($("#minPriceInput").val());
+        $("#maxPrice").val($("#maxPriceInput").val());
+    }
+
+    $(function () {
+        $("#slider-range").slider({
+            range: true,
+            min: 0,
+            max: 200000,
+            values: [5000, 10000],
+            slide: function (event, ui) {
+                $("#minPriceInput").val(ui.values[0]);
+                $("#maxPriceInput").val(ui.values[1]);
+                $("#minPrice").val(ui.values[0]);
+                $("#maxPrice").val(ui.values[1]);
+            }
+        });
+
+        $("#minPriceInput").val($("#slider-range").slider("values", 0));
+        $("#maxPriceInput").val($("#slider-range").slider("values", 1));
+        $("#minPrice").val($("#slider-range").slider("values", 0));
+        $("#maxPrice").val($("#slider-range").slider("values", 1));
+
+        $("#minPriceInput").on("input", function () {
+            var minValue = $(this).val();
+            var maxValue = $("#maxPriceInput").val();
+            $("#slider-range").slider("values", [minValue, maxValue]);
+            $("#minPrice").val(minValue);
+        });
+
+        $("#maxPriceInput").on("input", function () {
+            var minValue = $("#minPriceInput").val();
+            var maxValue = $(this).val();
+            $("#slider-range").slider("values", [minValue, maxValue]);
+            $("#maxPrice").val(maxValue);
+        });
+
+        $("#searchString").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/products/autocomplete",
+                    data: {term: request.term},
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 2
+        });
+    });
+</script>
+</body>
+</html>

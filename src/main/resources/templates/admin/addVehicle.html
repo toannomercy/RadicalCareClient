@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{adminLayout :: css}">
+    <title>Add Vehicle</title>
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <ul th:replace="~{adminLayout :: sidebar}"></ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div th:replace="~{adminLayout :: navbar}"></div>
+            <div class="container-fluid">
+                <!-- Content -->
+                <div class="container mt-5 mb-5 d-flex justify-content-center">
+                    <div style="background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" class="form-container col-md-6">
+                        <h2 class="text-center text-dark mb-4">Add Vehicle</h2>
+
+                        <!-- Success Message -->
+                        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <span th:text="${successMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+
+                        <!-- Error Messages -->
+                        <div th:if="${errors}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <ul>
+                                <li th:each="error : ${errors}" th:text="${error}"></li>
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+
+                        <form id="addVehicleForm" action="/admin/addVehicle" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="chassisNumber" class="form-label">Chassis Number</label>
+                                <input type="text" class="form-control" id="chassisNumber" name="chassisNumber" required>
+                                <div class="invalid-feedback">Please provide a valid Chassis Number.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="vehicleName" class="form-label">Vehicle Name</label>
+                                <input type="text" class="form-control" id="vehicleName" name="vehicleName" required>
+                                <div class="invalid-feedback">Please provide a valid Vehicle Name.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="importDate" class="form-label">Import Date</label>
+                                <input type="date" class="form-control" id="importDate" name="importDate" required>
+                                <div class="invalid-feedback">Please provide a valid Import Date.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="version" class="form-label">Version</label>
+                                <input type="text" class="form-control" id="version" name="version" required>
+                                <div class="invalid-feedback">Please provide a valid Version.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="color" class="form-label">Color</label>
+                                <input type="text" class="form-control" id="color" name="color" required>
+                                <div class="invalid-feedback">Please provide a valid Color.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="segment" class="form-label">Segment</label>
+                                <input type="text" class="form-control" id="segment" name="segment" required>
+                                <div class="invalid-feedback">Please provide a valid Segment.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="files" class="form-label">Upload Images</label>
+                                <input type="file" class="form-control" id="files" name="files" multiple>
+                                <div class="invalid-feedback">Please provide a valid Image.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="vehicleTypeId" class="form-label">Vehicle Type</label>
+                                <select class="form-select" id="vehicleTypeId" name="vehicleTypeId" required>
+                                    <option value="">Select Vehicle Type</option>
+                                    <option th:each="vehicleType : ${vehicleTypes}" th:value="${vehicleType.getVehicleTypeId()}" th:text="${vehicleType.getVehicleTypeName()}"></option>
+                                </select>
+                                <div class="invalid-feedback">Please provide a valid Vehicle Type.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="supplierId" class="form-label">Supplier</label>
+                                <select class="form-select" id="supplierId" name="supplierId" required>
+                                    <option value="">Select Supplier</option>
+                                    <option th:each="supplier : ${suppliers}" th:value="${supplier.getSupplierId()}" th:text="${supplier.getSupplierName()}"></option>
+                                </select>
+                                <div class="invalid-feedback">Please provide a valid Supplier.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="costId" class="form-label">Cost</label>
+                                <select class="form-select" id="costId" name="costId" required>
+                                    <option value="">Select Cost</option>
+                                    <option th:each="costTable : ${costTables}" th:value="${costTable.getCostId()}" th:text="${costTable.getBaseCost()}"></option>
+                                </select>
+                                <div class="invalid-feedback">Please provide a valid CostId.</div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                                <a href="/admin" class="btn btn-secondary btn-block">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- End Content -->
+            </div>
+        </div>
+        <footer th:replace="~{adminLayout :: footer}"></footer>
+    </div>
+</div>
+<th:block th:replace="~{adminLayout :: scroll}"></th:block>
+<div th:replace="~{adminLayout :: logout}"></div>
+<th:block th:replace="~{adminLayout :: script}"></th:block>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('addVehicleForm');
+
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            form.classList.add('was-validated');
+        }, false);
+    });
+</script>
+
+</body>
+</html>

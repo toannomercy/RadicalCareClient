@@ -917,5 +917,15 @@ header {
 .btn-block {
     width: 100%;
 }
+#filterSection {
+    border: 1px solid #ddd;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    margin-top: 10px;
+}
 
-
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+}

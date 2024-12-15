@@ -16,19 +16,32 @@
                         <div class="form-group mb-4">
                             <input type="text" id="username" class="form-control" placeholder="Username" required>
                         </div>
-                        <div class="form-group mb-4">
+                        <div class="form-group mb-4 position-relative">
                             <input type="password" id="password" class="form-control" placeholder="Password" required>
+                            <span id="togglePassword"
+                                  class="position-absolute top-50 end-0 translate-middle-y me-3"
+                                  style="cursor: pointer;">
+                                  <i class="bi bi-eye"></i>
+                            </span>
                         </div>
                         <div class="d-grid gap-2 form-action">
                             <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
                         </div>
                     </form>
+                    <p class="mt-3">
+                        <a class="text-info" th:href="@{/auth/forgotPassword}">Forgot Password?</a>
+                    </p>
                     <hr class="my-4">
-                    <a href="http://localhost:8080/oauth2/authorization/google" class="btn btn-outline-danger btn-block">
-                        Login with Google
+
+                    <a href="http://localhost:8080/oauth2/authorization/google"
+                       class="btn btn-light btn-block d-flex align-items-center justify-content-center"
+                       style="border-radius: 30px; padding: 10px;">
+                        <img src="../img/logo_google.png" alt="Google Logo" width="25" class="me-2">
+                        <span>Login with Google</span>
                     </a>
+
                     <p class="mt-3">Don't have an account?
-                        <a class="text-info text-center" th:href="@{/auth/register}">Register here</a>
+                        <a class="text-info text-center" th:href="@{/auth/register}">Register</a>
                     </p>
                 </div>
             </div>
@@ -36,24 +49,13 @@
     </div>
 </div>
 <th:block th:replace="~{layout::footer}"></th:block>
-<script src="../../jquery/jquery.min.js"></script>
-<script src="../../lib/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="../../lib/wow/wow.min.js"></script>
-<script src="../../lib/easing/easing.min.js"></script>
-<script src="../../lib/waypoints/waypoints.min.js"></script>
-<script src="../../lib/counterup/counterup.min.js"></script>
-<script src="../../lib/owlcarousel/owl.carousel.min.js"></script>
-<script src="../../lib/tempusdominus/js/moment.min.js"></script>
-<script src="../../lib/tempusdominus/js/moment-timezone.min.js"></script>
-<script src="../../js/tempusdominus-bootstrap-4.min.js"></script>
-<!-- Nhúng JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
 
         loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Ngăn form tự động submit
+            event.preventDefault();
 
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
@@ -75,7 +77,7 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    alert(`Welcome ${data.fullName}!`);
+                    // alert(`Welcome ${data.fullName}!`);
                     window.location.href = '/'; // Redirect sau khi đăng nhập thành công
                 } else {
                     const errorData = await response.json();
@@ -92,6 +94,33 @@
             errorMessage.classList.remove('d-none');
         }
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+
+        togglePassword.addEventListener('click', () => {
+            const isPasswordVisible = passwordInput.type === 'text';
+
+            passwordInput.type = isPasswordVisible ? 'password' : 'text';
+
+            togglePassword.innerHTML = isPasswordVisible
+                ? '<i class="bi bi-eye"></i>'
+                : '<i class="bi bi-eye-slash"></i>';
+        });
+    });
 </script>
+
+<!--Lib-->
+<script src="../../jquery/jquery.min.js"></script>
+<script src="../../lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../lib/wow/wow.min.js"></script>
+<script src="../../lib/easing/easing.min.js"></script>
+<script src="../../lib/waypoints/waypoints.min.js"></script>
+<script src="../../lib/counterup/counterup.min.js"></script>
+<script src="../../lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="../../lib/tempusdominus/js/moment.min.js"></script>
+<script src="../../lib/tempusdominus/js/moment-timezone.min.js"></script>
+<script src="../../js/tempusdominus-bootstrap-4.min.js"></script>
 </body>
 </html>

@@ -88,14 +88,12 @@ public class AuthController {
         }
     }
 
-    // Hiển thị form đăng ký
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
         model.addAttribute("registerRequest", new RegisterRequest());
         return "auth/register";
     }
 
-    // Xử lý đăng ký
     @PostMapping("/register")
     public String handleRegister(@ModelAttribute RegisterRequest registerRequest, Model model) {
         try {
@@ -107,6 +105,45 @@ public class AuthController {
         }
         return "auth/register";
     }
+
+
+    @GetMapping("/forgotPassword")
+    public String showForgotPasswordForm() {
+        return "auth/forgotPassword";
+    }
+
+    @PostMapping("/forgotPassword")
+    public String processForgotPassword(@RequestParam String email, Model model) {
+        try {
+            authApiService.forgotPassword(email);
+            model.addAttribute("successMessage", "Reset link has been sent to your email.");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Failed to send reset link. Please try again.");
+        }
+        return "auth/forgotPassword";
+    }
+
+    @PostMapping("/resetPassword")
+    public String processResetPassword(
+            @RequestParam("token") String token,
+            @RequestParam("password") String password,
+            @RequestParam("confirmPassword") String confirmPassword,
+            Model model) {
+        if (!password.equals(confirmPassword)) {
+            model.addAttribute("errorMessage", "Passwords do not match.");
+            model.addAttribute("token", token);
+            return "auth/resetPassword";
+        }
+
+        try {
+            authApiService.resetPassword(token, password);
+            model.addAttribute("successMessage", "Password has been reset successfully.");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Failed to reset password. Please try again.");
+        }
+        return "auth/resetPassword";
+    }
+
 }
 
 

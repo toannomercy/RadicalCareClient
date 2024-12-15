@@ -7,7 +7,12 @@ import org.example.radicalmotor.Dtos.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -37,12 +42,27 @@ public class AuthApiService {
         return restTemplate.postForObject(baseUrl + "/api/v1/auth/register", registerRequest, String.class);
     }
 
-    public String forgotPassword(String email) {
-        return restTemplate.postForObject(baseUrl + "/api/v1/auth/forgot-password", email, String.class);
+    public void forgotPassword(String email) {
+        String url = baseUrl + "/api/v1/auth/forgot-password";
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("email", email);
+
+        restTemplate.postForObject(url, params, String.class);
     }
 
-    public String resetPassword(String token, String newPassword) {
-        return restTemplate.postForObject(baseUrl + "/api/v1/auth/reset-password?token=" + token, newPassword, String.class);
+
+    public void resetPassword(String token, String password) {
+        String url = baseUrl + "/api/v1/auth/reset-password";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("token", token);
+        requestBody.put("password", password);
+
+        try {
+            restTemplate.postForEntity(url, requestBody, Void.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to reset password: " + e.getMessage());
+        }
     }
 }
 

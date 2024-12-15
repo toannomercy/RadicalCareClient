@@ -3,6 +3,7 @@ package org.example.radicalmotor.Configs;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -66,6 +67,7 @@ public class SecurityConfig {
                         .requestMatchers("/products").permitAll()
                         .requestMatchers(("/vehicles")).permitAll()
                         .requestMatchers("/services").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/forgotPassword").permitAll()
                         .anyRequest().authenticated() // Route khác cần xác thực
                 )
                 .oauth2Login(oauth2 -> oauth2

@@ -2,21 +2,16 @@ package org.example.radicalmotor.Dtos;
 
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Data
-public class VehicleDto {
+public class FilterGetVm {
     private String chassisNumber;
     private String vehicleName;
-    private LocalDate importDate;
-    private String version;
-    private String color;
     private String segment;
-    private boolean isDeleted;
+    private String categoryName;
+    private String color;
     private boolean sold;
-    private String description;
     private String price;
     private List<String> imageUrls;
 }
-

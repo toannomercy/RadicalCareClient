@@ -1,6 +1,7 @@
 package org.example.radicalmotor.Utils;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpResponse;
@@ -20,20 +21,34 @@ public class RestTemplateInterceptor implements ClientHttpRequestInterceptor {
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         String token = getTokenFromCookie();
         if (token != null) {
-            request.getHeaders().set("Authorization", "Bearer " + token); // Thêm token vào header
+            request.getHeaders().set("Authorization", "Bearer " + token);
+        } else {
+            System.out.println("No token found in cookie");
         }
-        return execution.execute(request, body); // Gửi request tiếp
+
+        return execution.execute(request, body);
     }
 
-    // Lấy token từ cookie
     private String getTokenFromCookie() {
-        return Arrays.stream(Optional.ofNullable(RequestContextHolder.getRequestAttributes())
-                        .map(requestAttributes -> ((ServletRequestAttributes) requestAttributes).getRequest())
-                        .map(request -> request.getCookies())
-                        .orElse(new Cookie[0]))
-                .filter(cookie -> "token".equals(cookie.getName())) // Tìm cookie có tên "token"
-                .map(Cookie::getValue) // Lấy giá trị của cookie
-                .findFirst()
-                .orElse(null); // Nếu không có cookie, trả về null
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes == null) {
+            System.out.println("RequestContextHolder is null");
+            return null;
+        }
+
+        HttpServletRequest request = attributes.getRequest();
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("token".equals(cookie.getName())) {
+                    System.out.println("Token found in cookie: " + cookie.getValue());
+                    return cookie.getValue();
+                }
+            }
+        }
+        System.out.println("Token not found in cookie");
+        return null;
     }
+
 }

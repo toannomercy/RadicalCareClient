@@ -45,7 +45,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Vô hiệu hóa CSRF
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**",
                                         "/js/**",
@@ -66,9 +66,11 @@ public class SecurityConfig {
                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                         .requestMatchers("/products").permitAll()
                         .requestMatchers(("/vehicles")).permitAll()
+                        .requestMatchers(HttpMethod.GET,"/vehicles/detail/**" ).permitAll()
                         .requestMatchers("/services").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/forgotPassword").permitAll()
-                        .anyRequest().authenticated() // Route khác cần xác thực
+                        .requestMatchers( "/cart/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/auth/login") // Trang login tùy chỉnh

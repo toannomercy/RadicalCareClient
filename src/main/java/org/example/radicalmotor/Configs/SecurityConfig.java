@@ -69,6 +69,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/vehicles/detail/**" ).permitAll()
                         .requestMatchers("/services").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/forgotPassword").permitAll()
+
                         .requestMatchers( "/cart/**").permitAll()
                         .anyRequest().authenticated()
                 )

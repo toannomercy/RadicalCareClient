@@ -1,6 +1,5 @@
 package org.example.radicalmotor.Controllers;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -10,11 +9,10 @@ import org.example.radicalmotor.Dtos.LoginRequest;
 import org.example.radicalmotor.Dtos.RegisterRequest;
 import org.example.radicalmotor.Services.AuthApiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @Controller
@@ -30,82 +28,60 @@ public class AuthController {
 
     // Hiển thị form login
     @GetMapping("/login")
-    public String showLoginForm(Model model) {
-        model.addAttribute("loginRequest", new LoginRequest());
+    public String showLoginForm() {
         return "auth/login";
     }
 
     // Xử lý login
     @PostMapping("/login")
-    public String handleLogin(@ModelAttribute LoginRequest loginRequest, HttpServletResponse response, HttpSession session, Model model) {
+    public ResponseEntity<?> handleLogin(@RequestBody LoginRequest loginRequest, HttpSession session) {
         try {
             JwtResponse jwtResponse = authApiService.login(loginRequest);
 
-            // Lưu JWT vào cookie
-            Cookie jwtCookie = new Cookie("token", jwtResponse.getToken());
-            jwtCookie.setHttpOnly(true);
-            jwtCookie.setPath("/");
-            jwtCookie.setMaxAge(24 * 60 * 60); // 1 ngày
-            response.addCookie(jwtCookie);
-
-            // Lưu vào session
+            // Lưu thông tin người dùng vào session
             session.setAttribute("username", jwtResponse.getFullName());
             session.setAttribute("role", jwtResponse.getRole());
 
-            // Điều hướng dựa trên role
-            if ("ADMIN".equals(jwtResponse.getRole())) {
-                return "redirect:/admin";
-            }
-            return "redirect:/";
+            // Trả token dưới dạng Bearer Token trong response header
+            return ResponseEntity.ok()
+                    .header("Authorization", "Bearer " + jwtResponse.getToken())
+                    .body("Login successful");
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Invalid username or password.");
-            return "auth/login";
+            log.error("Login failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password.");
         }
     }
 
     @PostMapping("/logout")
-    public String handleLogout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+    public ResponseEntity<?> handleLogout(HttpSession session) {
         try {
-            // Log thông tin session
+            // Invalidate session
             if (session != null) {
                 session.invalidate();
                 log.info("Session invalidated.");
             }
-
-            // Xóa cookie JWT
-            Cookie jwtCookie = new Cookie("token", null);
-            jwtCookie.setHttpOnly(true);
-            jwtCookie.setPath("/");
-            jwtCookie.setMaxAge(0);
-            response.addCookie(jwtCookie);
-
-            log.info("JWT cookie cleared.");
-
-            return "redirect:/auth/login";
+            return ResponseEntity.ok("Logout successful");
         } catch (Exception e) {
             log.error("Error during logout: {}", e.getMessage());
-            return "redirect:/auth/login?error=logout_failed";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Logout failed");
         }
     }
 
     @GetMapping("/register")
-    public String showRegisterForm(Model model) {
-        model.addAttribute("registerRequest", new RegisterRequest());
+    public String showRegisterForm() {
         return "auth/register";
     }
 
     @PostMapping("/register")
-    public String handleRegister(@ModelAttribute RegisterRequest registerRequest, Model model) {
+    public ResponseEntity<?> handleRegister(@RequestBody RegisterRequest registerRequest) {
         try {
             String successMessage = authApiService.register(registerRequest);
-            model.addAttribute("successMessage", successMessage);
-            return "redirect:/auth/login";
+            return ResponseEntity.ok(successMessage);
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Registration failed.");
+            log.error("Registration failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed.");
         }
-        return "auth/register";
     }
-
 
     @GetMapping("/forgotPassword")
     public String showForgotPasswordForm() {
@@ -113,40 +89,31 @@ public class AuthController {
     }
 
     @PostMapping("/forgotPassword")
-    public String processForgotPassword(@RequestParam String email, Model model) {
+    public ResponseEntity<?> processForgotPassword(@RequestParam String email) {
         try {
             authApiService.forgotPassword(email);
-            model.addAttribute("successMessage", "Reset link has been sent to your email.");
+            return ResponseEntity.ok("Reset link has been sent to your email.");
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Failed to send reset link. Please try again.");
+            log.error("Failed to send reset link: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send reset link. Please try again.");
         }
-        return "auth/forgotPassword";
     }
 
     @PostMapping("/resetPassword")
-    public String processResetPassword(
+    public ResponseEntity<?> processResetPassword(
             @RequestParam("token") String token,
             @RequestParam("password") String password,
-            @RequestParam("confirmPassword") String confirmPassword,
-            Model model) {
+            @RequestParam("confirmPassword") String confirmPassword) {
         if (!password.equals(confirmPassword)) {
-            model.addAttribute("errorMessage", "Passwords do not match.");
-            model.addAttribute("token", token);
-            return "auth/resetPassword";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passwords do not match.");
         }
 
         try {
             authApiService.resetPassword(token, password);
-            model.addAttribute("successMessage", "Password has been reset successfully.");
+            return ResponseEntity.ok("Password has been reset successfully.");
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Failed to reset password. Please try again.");
+            log.error("Failed to reset password: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to reset password. Please try again.");
         }
-        return "auth/resetPassword";
     }
-
 }
-
-
-
-
-

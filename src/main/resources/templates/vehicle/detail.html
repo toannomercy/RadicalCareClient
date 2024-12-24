@@ -55,15 +55,15 @@
                     <p><strong>Màu sắc:</strong> <span th:text="${vehicle.color}"></span></p>
                     <p><strong>Phân khúc:</strong> <span th:text="${vehicle.segment}"></span></p>
                     <p><strong>Mô Tả:</strong> <span class="text-secondary" th:text="${vehicle.description}"></span></p>
-                    <form th:action="@{/cart/add}" method="post">
+                    <form onsubmit="addToCart(event)">
                         <input type="hidden" name="chassisNumber" th:value="${vehicle.chassisNumber}" />
                         <input type="hidden" name="vehicleName" th:value="${vehicle.vehicleName}" />
                         <input type="hidden" name="price" th:value="${vehicle.price}" />
-                        <input type="number" name="quantity" value="1" min="1" />
+                        <input type="number" name="quantity" id="quantity" value="1" min="1" />
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-cart-plus me-2"></i>Add to Cart</button>
+                            <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                        </button>
                     </form>
-
                 </div>
             </div>
         </div>
@@ -84,6 +84,7 @@
         // Thêm viền đỏ vào ảnh được chọn
         element.classList.add('border-danger');
     }
+
 </script>
 
 <!--Lib-->

@@ -46,6 +46,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**",
                                         "/js/**",
@@ -69,7 +72,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/vehicles/detail/**" ).permitAll()
                         .requestMatchers("/services").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/forgotPassword").permitAll()
-                        .requestMatchers( "/cart/**").permitAll()
+                        .requestMatchers( "/cart/**").hasAnyAuthority("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/cart/add").hasAnyAuthority("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2

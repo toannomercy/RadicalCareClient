@@ -10,20 +10,13 @@ public class VehicleDto {
     private String chassisNumber;
     private String vehicleName;
     private LocalDate importDate;
-
     private String version;
     private String color;
     private String segment;
-
     private boolean isDeleted;
-
     private boolean sold;
-    private Long costId;
-    private String price;
-    private Long categoryId;
-    private Long supplierId;
     private String description;
-    private List<String> warrantyHistory;
+    private String price;
     private List<String> imageUrls;
     /**
      * Chuyển price từ String sang Double.
@@ -40,3 +33,4 @@ public class VehicleDto {
     }
 
 }
+

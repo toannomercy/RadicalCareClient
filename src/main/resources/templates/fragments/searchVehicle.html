@@ -20,7 +20,7 @@
      class="col-md-2 mx-4 sticky-search" data-aos="zoom-in">
     <!-- Search Form -->
     <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
-          th:action="@{/products}" method="get" style="width:100% !important;">
+          th:action="@{/vehicles}" method="get" style="width:100% !important;">
         <div class="input-group" >
             <input id="searchString" name="searchString" type="text" class="form-control bg-light border-0 small"
                    placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
@@ -38,7 +38,7 @@
     <div id="filterSection" class="filter-section" style="display: none">
         <!-- Vehicle Type Filter -->
         <h4 class="text-center bg-primary text-white py-2">Vehicle Type</h4>
-        <form id="filterForm" th:action="@{/products}" method="get">
+        <form id="filterForm" th:action="@{/vehicles}" method="get">
             <div class="form-group">
                 <div th:each="vehicleType : ${vehicleTypes}" class="custom-checkbox">
                     <label>

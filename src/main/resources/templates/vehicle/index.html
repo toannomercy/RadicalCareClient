@@ -101,6 +101,55 @@
         </div>
     </div>
 </div>
+<!--<div class="container mt-4">-->
+<!--    <div class="row">-->
+<!--        &lt;!&ndash; Cột bộ lọc và tìm kiếm &ndash;&gt;-->
+<!--        <div class="col-md-3">-->
+<!--            <form th:action="@{/vehicles}" method="get">-->
+<!--                &lt;!&ndash; Tìm kiếm &ndash;&gt;-->
+<!--                <div class="mb-3">-->
+<!--                    <input type="text" name="keyword" class="form-control" th:value="${keyword}" placeholder="Tìm kiếm xe...">-->
+<!--                </div>-->
+<!--                &lt;!&ndash; Khoảng giá &ndash;&gt;-->
+<!--                <div class="mb-3">-->
+<!--                    <input type="number" name="minPrice" class="form-control" th:value="${minPrice}" placeholder="Giá thấp nhất">-->
+<!--                    <input type="number" name="maxPrice" class="form-control mt-2" th:value="${maxPrice}" placeholder="Giá cao nhất">-->
+<!--                </div>-->
+<!--                &lt;!&ndash; Lọc theo danh mục &ndash;&gt;-->
+<!--                <div class="mb-3">-->
+<!--                    <select name="category" class="form-select" th:value="${category}">-->
+<!--                        <option value="">&#45;&#45; Chọn danh mục &#45;&#45;</option>-->
+<!--                        <option value="SUV">SUV</option>-->
+<!--                        <option value="Sedan">Sedan</option>-->
+<!--                        <option value="Truck">Truck</option>-->
+<!--                        <option value="Convertible">Convertible</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; Nút áp dụng &ndash;&gt;-->
+<!--                <button type="submit" class="btn btn-primary w-100">Áp dụng</button>-->
+<!--            </form>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Cột hiển thị danh sách Vehicle &ndash;&gt;-->
+<!--        <div class="col-md-9">-->
+<!--            <div class="row">-->
+<!--                <div th:each="vehicle : ${vehicles}" class="col-md-4 mb-3">-->
+<!--                    <div class="card h-100">-->
+<!--                        <img th:src="${vehicle.imageUrls[0]}" class="card-img-top" alt="Vehicle Image">-->
+<!--                        <div class="card-body">-->
+<!--                            <h5 class="card-title" th:text="${vehicle.vehicleName}"></h5>-->
+<!--                            <p class="card-text">Danh mục: <span th:text="${vehicle.categoryName}"></span></p>-->
+<!--                            <p class="card-text text-primary">Giá: <span th:text="${vehicle.price}"></span></p>-->
+<!--                        </div>-->
+<!--                        <div class="card-footer">-->
+<!--                            <a th:href="@{/vehicles/detail/{id}(id=${vehicle.chassisNumber})}" class="btn btn-sm btn-primary">Xem chi tiết</a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 
 <th:block th:replace="~{layout::footer}"></th:block>
 <th:block th:replace="~{layout::script}"></th:block>
@@ -175,5 +224,17 @@
     });
 
 </script>
+
+<!--Lib-->
+<script src="../../jquery/jquery.min.js"></script>
+<script src="../../lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../lib/wow/wow.min.js"></script>
+<script src="../../lib/easing/easing.min.js"></script>
+<script src="../../lib/waypoints/waypoints.min.js"></script>
+<script src="../../lib/counterup/counterup.min.js"></script>
+<script src="../../lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="../../lib/tempusdominus/js/moment.min.js"></script>
+<script src="../../lib/tempusdominus/js/moment-timezone.min.js"></script>
+<script src="../../js/tempusdominus-bootstrap-4.min.js"></script>
 </body>
 </html>

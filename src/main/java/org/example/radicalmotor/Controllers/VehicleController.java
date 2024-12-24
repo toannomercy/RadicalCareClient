@@ -1,17 +1,25 @@
 package org.example.radicalmotor.Controllers;
 
+import org.example.radicalmotor.Dtos.ApiResponse;
+import org.example.radicalmotor.Dtos.FilterGetVm;
+import org.example.radicalmotor.Dtos.SearchVehicleGetVm;
 import org.example.radicalmotor.Dtos.VehicleDto;
 import org.example.radicalmotor.Services.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
+
+@RequestMapping("/vehicles")
 
 public class VehicleController {
 
@@ -22,7 +30,7 @@ public class VehicleController {
         this.vehicleService = vehicleService;
     }
 
-    @GetMapping("/vehicles")
+    @GetMapping()
     public String getAllVehicles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size,
@@ -86,7 +94,7 @@ public class VehicleController {
         model.addAttribute("minCost", minCost);
         model.addAttribute("maxCost", maxCost);
 
-        return "vehicle/index"; // Tên file view trong templates/vehicle/index.html
+        return "vehicle/index";
     }
 
 
@@ -109,6 +117,44 @@ public class VehicleController {
 //        model.addAttribute("totalPages", (int) Math.ceil((double) vehicles.size() / size));
 //
 //        return "vehicle/index"; // Tên file view trong templates/vehicle/index.html
+
+    @GetMapping("/detail/{id}")
+    public String getVehicleDetail(@PathVariable("id") String chassisNumber, Model model) {
+        try {
+            VehicleDto vehicle = vehicleService.getVehicleDetail(chassisNumber);
+            model.addAttribute("vehicle", vehicle);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Không tìm thấy thông tin cho xe có mã: " + chassisNumber);
+        }
+        return "vehicle/detail";
+    }
+
+//    @GetMapping()
+//    public String getFilteredAndSearchedVehicles(
+//            @RequestParam(required = false) String keyword,
+//            @RequestParam(required = false) Double minPrice,
+//            @RequestParam(required = false) Double maxPrice,
+//            @RequestParam(required = false) String segment,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "9") int size,
+//            Model model) {
+//
+//        if (keyword != null && !keyword.isEmpty()) {
+//            List<SearchVehicleGetVm> searchResults = vehicleService.searchVehicles(keyword);
+//            model.addAttribute("vehicles", searchResults);
+//        } else {
+//            List<FilterGetVm> filteredVehicles = vehicleService.filterVehicles(minPrice, maxPrice, segment, page, size);
+//            model.addAttribute("vehicles", filteredVehicles);
+//        }
+//
+//        model.addAttribute("keyword", keyword);
+//        model.addAttribute("minPrice", minPrice);
+//        model.addAttribute("maxPrice", maxPrice);
+//        model.addAttribute("segment", segment);
+//        model.addAttribute("currentPage", page);
+//        model.addAttribute("pageSize", size);
+//
+//        return "vehicle/index";
 //    }
 }
 

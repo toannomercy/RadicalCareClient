@@ -2,18 +2,14 @@
 package org.example.radicalmotor.Services;
 
 import org.example.radicalmotor.Dtos.ApiResponse;
-import org.example.radicalmotor.Dtos.FilterGetVm;
-import org.example.radicalmotor.Dtos.SearchVehicleGetVm;
 import org.example.radicalmotor.Dtos.VehicleDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -36,7 +32,8 @@ public class VehicleService {
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ApiResponse<VehicleDto[]>>() {}
+                new ParameterizedTypeReference<ApiResponse<VehicleDto[]>>() {
+                }
         );
 
         // Lấy danh sách xe từ ApiResponse
@@ -51,7 +48,8 @@ public class VehicleService {
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ApiResponse<VehicleDto>>() {}
+                new ParameterizedTypeReference<ApiResponse<VehicleDto>>() {
+                }
         );
 
         // Lấy dữ liệu từ response
@@ -59,4 +57,5 @@ public class VehicleService {
 
         return vehicle;
     }
+}
 

@@ -1,12 +1,8 @@
 package org.example.radicalmotor.Controllers;
 
-import org.example.radicalmotor.Dtos.ApiResponse;
-import org.example.radicalmotor.Dtos.FilterGetVm;
-import org.example.radicalmotor.Dtos.SearchVehicleGetVm;
 import org.example.radicalmotor.Dtos.VehicleDto;
 import org.example.radicalmotor.Services.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

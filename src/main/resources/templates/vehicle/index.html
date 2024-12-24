@@ -1,34 +1,102 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:replace="~{layout::head}">
-    <title>Index</title>
+    <title>Vehicle List</title>
 </head>
 <body>
 <th:block th:replace="~{layout::header}"></th:block>
-<!-- Slideshow Start -->
 <th:block th:replace="fragments/slider :: slider"></th:block>
 
-<!--Vehicle Image-->
-<div class="row">
-    <div class="col">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <div th:each="vehicle : ${vehicles}" class="col-md-4 mb-4" data-aos="zoom-in">
-                <a th:href="@{/vehicles/detail/{id}(id=${vehicle.chassisNumber})}">
-                    <div class="card-vehicle card h-100 zoom-in" style="min-width: 35vh;">
-                        <div class="card-body">
-                            <img th:src="${vehicle.imageUrls[0]}" class="card-img-bottom img-fluid" alt="Vehicle Image">
-                        </div>
-                        <div class="card-footer d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-title mb-0 text-uppercase text-secondary" th:text="${vehicle.vehicleName}"></h6>
-                                <p class="card-text mb-0 text-uppercase text-dark" th:text="${vehicle.segment}"></p>
-                            </div>
-                            <div>
-                                <h6 class="card-text mb-0 text-primary" th:text="${vehicle.price}"></h6>
-                            </div>
-                        </div>
+<!-- Main Layout -->
+<div class="container mt-3">
+    <div class="row">
+        <!-- Sidebar: Search and Filters (Bên Trái) -->
+        <div class="col-md-3">
+            <!-- Search Section -->
+            <div class="card p-3 mb-4">
+                <h5 class="mb-3">Search</h5>
+                <form action="/vehicles" method="get">
+                    <div class="input-group mb-3">
+                        <input type="text" name="keyword" id="searchInput" class="form-control" placeholder="Search for vehicles...">
+                        <button type="submit" class="btn btn-primary" id="searchBtn">Search</button>
                     </div>
-                </a>
+                </form>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="card p-3">
+                <h5 class="mb-3">Filters</h5>
+                <form method="get" action="/vehicles">
+                    <!-- Segment Filter -->
+                    <div class="mb-3">
+                        <label for="segmentFilter" class="form-label">Segment</label>
+                        <select name="segment" id="segmentFilter" class="form-select">
+                            <option value="">All</option>
+                            <option value="Cruiser">Cruiser</option>
+                            <option value="Sport">Sport</option>
+                            <option value="Off-road motorbikes">Off-road motorbikes</option>
+                            <option value="Manual">Manual</option>
+                            <option value="Scooter">Scooter</option>
+                            <option value="Classic">Classic</option>
+                        </select>
+                    </div>
+
+                    <!-- Color Filter -->
+                    <div class="mb-3">
+                        <label for="colorFilter" class="form-label">Color</label>
+                        <select name="color" id="colorFilter" class="form-select">
+                            <option value="">All</option>
+                            <option value="Red">Red</option>
+                            <option value="White">White</option>
+                            <option value="Black">Black</option>
+                            <option value="Green">Green</option>
+                            <option value="Silver">Silver</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100" id="applyFilterBtn">Apply Filters</button>
+                    <a href="/vehicles" class="btn btn-secondary w-100 mt-2" id="clearFilterBtn">Clear Filters</a>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Content: Vehicle List and Pagination (Bên Phải) -->
+        <div class="col-md-9">
+            <!-- Vehicle List -->
+            <div class="row row-cols-1 row-cols-md-3 g-4" id="vehicleContainer">
+                <div th:each="vehicle : ${vehicles}" class="col" data-aos="zoom-in">
+                    <a th:href="@{/vehicles/detail/{id}(id=${vehicle.chassisNumber})}">
+                        <div class="card-vehicle card h-100">
+                            <div class="card-body">
+                                <img th:src="${vehicle.imageUrls[0]}" class="card-img-bottom img-fluid" alt="Vehicle Image">
+                            </div>
+                            <div class="card-footer d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="card-title mb-0 text-uppercase text-secondary" th:text="${vehicle.vehicleName}"></h6>
+                                    <p class="card-text mb-0 text-uppercase text-dark" th:text="${vehicle.color}"></p>
+                                </div>
+                                <div>
+                                    <h6 class="card-text mb-0 text-primary" th:text="${vehicle.getPrice()}"></h6>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination justify-content-center mt-4">
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{/vehicles(page=${currentPage - 1}, size=${9})}">Previous</a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{/vehicles(page=${i}, size=${9})}" th:text="${i + 1}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                        <a class="page-link" th:href="@{/vehicles(page=${currentPage + 1}, size=${9})}">Next</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -83,24 +151,10 @@
 <!--    </div>-->
 <!--</div>-->
 
-<!-- Phân trang -->
-<div class="pagination justify-content-center mt-4">
-    <ul class="pagination">
-        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-            <a class="page-link" th:href="@{/vehicles(page=${currentPage - 1}, size=${9})}">Previous</a>
-        </li>
-        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
-            <a class="page-link" th:href="@{/vehicles(page=${i}, size=${9})}" th:text="${i + 1}"></a>
-        </li>
-        <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
-            <a class="page-link" th:href="@{/vehicles(page=${currentPage + 1}, size=${9})}">Next</a>
-        </li>
-    </ul>
-</div>
-
-
 <th:block th:replace="~{layout::footer}"></th:block>
 <th:block th:replace="~{layout::script}"></th:block>
+
+
 <script>
     AOS.init({
         duration: 1000,
@@ -115,65 +169,60 @@
         }
     }
 
-    function clearFilters() {
-        const filterForm = document.getElementById("filterForm");
-        if (filterForm) {
-            filterForm.reset();
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchBtn = document.getElementById("searchBtn");
+        const applyFilterBtn = document.getElementById("applyFilterBtn");
+        const clearFilterBtn = document.getElementById("clearFilterBtn");
+        let vehicles = [];
+
+        // Lấy dữ liệu từ Thymeleaf
+        vehicles = JSON.parse('[[${vehicles}]]'.replace(/&quot;/g, '"'));
+
+        function renderVehicles(filteredVehicles) {
+            const vehicleContainer = document.getElementById("vehicleContainer");
+            vehicleContainer.innerHTML = "";
+            filteredVehicles.forEach(vehicle => {
+                vehicleContainer.innerHTML += `
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="${vehicle.imageUrls[0]}" class="card-img-top" alt="${vehicle.vehicleName}">
+                        <div class="card-body">
+                            <h6>${vehicle.vehicleName}</h6>
+                            <p>${vehicle.segment}</p>
+                            <p>${vehicle.color}</p>
+                            <h6>${vehicle.price}</h6>
+                        </div>
+                    </div>
+                </div>
+            `;
+            });
         }
-        window.location.href = '/products';
-    }
 
-    function applyFilters() {
-        $("#minPrice").val($("#minPriceInput").val());
-        $("#maxPrice").val($("#maxPriceInput").val());
-    }
-
-    $(function () {
-        $("#slider-range").slider({
-            range: true,
-            min: 0,
-            max: 200000,
-            values: [5000, 10000],
-            slide: function (event, ui) {
-                $("#minPriceInput").val(ui.values[0]);
-                $("#maxPriceInput").val(ui.values[1]);
-                $("#minPrice").val(ui.values[0]);
-                $("#maxPrice").val(ui.values[1]);
-            }
+        searchBtn.addEventListener("click", () => {
+            const keyword = document.getElementById("searchInput").value.toLowerCase();
+            const filtered = vehicles.filter(vehicle =>
+                vehicle.vehicleName.toLowerCase().includes(keyword)
+            );
+            renderVehicles(filtered);
         });
 
-        $("#minPriceInput").val($("#slider-range").slider("values", 0));
-        $("#maxPriceInput").val($("#slider-range").slider("values", 1));
-        $("#minPrice").val($("#slider-range").slider("values", 0));
-        $("#maxPrice").val($("#slider-range").slider("values", 1));
+        applyFilterBtn.addEventListener("click", () => {
+            const segment = document.getElementById("segmentFilter").value;
+            const color = document.getElementById("colorFilter").value;
+            const minCost = document.getElementById("minCost").value;
+            const maxCost = document.getElementById("maxCost").value;
 
-        $("#minPriceInput").on("input", function () {
-            var minValue = $(this).val();
-            var maxValue = $("#maxPriceInput").val();
-            $("#slider-range").slider("values", [minValue, maxValue]);
-            $("#minPrice").val(minValue);
-        });
+            const filtered = vehicles.filter(vehicle =>
+                (!segment || vehicle.segment === segment) &&
+                (!color || vehicle.color === color) &&
+                (!minCost || vehicle.price >= minCost) &&
+                (!maxCost || vehicle.price <= maxCost)
+            );
 
-        $("#maxPriceInput").on("input", function () {
-            var minValue = $("#minPriceInput").val();
-            var maxValue = $(this).val();
-            $("#slider-range").slider("values", [minValue, maxValue]);
-            $("#maxPrice").val(maxValue);
-        });
-
-        $("#searchString").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "/products/autocomplete",
-                    data: {term: request.term},
-                    success: function (data) {
-                        response(data);
-                    }
-                });
-            },
-            minLength: 2
+            renderVehicles(filtered);
         });
     });
+
 </script>
 
 <!--Lib-->

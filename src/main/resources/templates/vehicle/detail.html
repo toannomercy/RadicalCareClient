@@ -21,6 +21,9 @@
     <div th:if="${errorMessage != null}">
         <div class="alert alert-danger text-center" th:text="${errorMessage}"></div>
     </div>
+    <div th:if="${successMessage != null}">
+        <div class="alert alert-success text-center" th:text="${successMessage}"></div>
+    </div>
 
     <!-- Nội dung chi tiết xe -->
     <div th:if="${vehicle != null}">
@@ -46,7 +49,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Phần thông tin xe -->
             <div class="col-md-5">
                 <div class="card border-0 shadow-sm p-4">
@@ -55,13 +57,15 @@
                     <p><strong>Màu sắc:</strong> <span th:text="${vehicle.color}"></span></p>
                     <p><strong>Phân khúc:</strong> <span th:text="${vehicle.segment}"></span></p>
                     <p><strong>Mô Tả:</strong> <span class="text-secondary" th:text="${vehicle.description}"></span></p>
-                    <form onsubmit="addToCart(event)">
+                    <!-- Form gửi dữ liệu tới controller -->
+                    <form action="/cart/add" method="POST">
                         <input type="hidden" name="chassisNumber" th:value="${vehicle.chassisNumber}" />
                         <input type="hidden" name="vehicleName" th:value="${vehicle.vehicleName}" />
+                        <input type="hidden" name="color" th:value="${vehicle.color}" />
                         <input type="hidden" name="price" th:value="${vehicle.price}" />
-                        <input type="number" name="quantity" id="quantity" value="1" min="1" />
+                        <input type="number" name="quantity" id="quantity" value="1" min="1" required />
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                            <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ hàng
                         </button>
                     </form>
                 </div>
@@ -84,7 +88,52 @@
         // Thêm viền đỏ vào ảnh được chọn
         element.classList.add('border-danger');
     }
+    document.getElementById("addToCartButton").addEventListener("click", function () {
+        const chassisNumber = document.getElementById("chassisNumber").value;
+        const vehicleName = document.getElementById("vehicleName").value;
+        const color = document.getElementById("color").value;
+        const price = document.getElementById("price").value;
+        const userId = document.getElementById("userId").value;
+        const quantity = document.getElementById("quantity").value;
 
+        fetch("/cart/add", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+                chassisNumber: chassisNumber,
+                vehicleName: vehicleName,
+                color: color,
+                price: price,
+                userId: userId,
+                quantity: quantity,
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status === "success") {
+                    showToast("Success", data.message, "success"); // Hiển thị thông báo thành công
+                } else {
+                    showToast("Error", data.message, "error"); // Hiển thị thông báo lỗi
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                showToast("Error", "Something went wrong. Please try again later.", "error");
+            });
+    });
+
+    function showToast(title, message, type) {
+        // Hàm xử lý hiển thị thông báo (tuỳ vào library bạn sử dụng, ví dụ: toastr.js, SweetAlert, v.v.)
+        if (type === "success") {
+            // Thông báo thành công
+            alert(`${title}: ${message}`);
+        } else if (type === "error") {
+            // Thông báo lỗi
+            alert(`${title}: ${message}`);
+        }
+    }
 </script>
 
 <!--Lib-->

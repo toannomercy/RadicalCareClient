@@ -3,18 +3,20 @@ package org.example.radicalmotor.Configs;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.example.radicalmotor.Utils.JwtUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+@Slf4j
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
-    private static final Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
 
     private final JwtUtils jwtUtils;
 
@@ -28,27 +30,78 @@ public class AuthInterceptor implements HandlerInterceptor {
         Cookie[] cookies = request.getCookies();
         boolean isLoggedIn = false;
 
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("token".equals(cookie.getName())) {
-                    String token = cookie.getValue();
-                    if (jwtUtils.validateToken(token)) {
-                        isLoggedIn = true;
-                        break;
+        log.info("Processing request URI: {}", request.getRequestURI());
+        Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+        log.debug("Current SecurityContextHolder Authentication: {}", currentAuth);
+
+        // Check if authentication is already set and valid
+        if (currentAuth == null || currentAuth instanceof AnonymousAuthenticationToken) {
+            String token = null;
+
+            // Check token in Authorization header
+            String authorizationHeader = request.getHeader("Authorization");
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                token = authorizationHeader.substring(7); // Remove "Bearer " prefix
+                log.debug("Found token in Authorization header: {}", token);
+            } else {
+                // Fallback to check cookies for token
+                if (cookies != null) {
+                    for (Cookie cookie : cookies) {
+                        if ("token".equals(cookie.getName())) {
+                            token = cookie.getValue();
+                            log.debug("Found token in cookie: {}", token);
+                            break;
+                        }
                     }
                 }
             }
+
+            // Validate token if found
+            if (token != null) {
+                try {
+                    if (jwtUtils.validateToken(token)) {
+                        log.info("Token is valid. Setting authentication in SecurityContextHolder.");
+                        isLoggedIn = true;
+
+                        // Set authentication into SecurityContextHolder
+                        SecurityContextHolder.getContext().setAuthentication(jwtUtils.getAuthentication(token));
+                        log.debug("Updated SecurityContextHolder Authentication: {}",
+                                SecurityContextHolder.getContext().getAuthentication());
+                    } else {
+                        log.warn("Invalid token: {}", token);
+                        clearAuthentication(response);
+                    }
+                } catch (Exception e) {
+                    log.error("Error validating token: {}", e.getMessage());
+                    clearAuthentication(response);
+                }
+            } else {
+                log.info("No token found in request headers or cookies.");
+            }
         } else {
-            logger.info("No cookies found in the request.");
+            log.info("Authentication already exists in SecurityContextHolder: {}", currentAuth);
+            isLoggedIn = true;
         }
 
-        // Thêm thông tin đăng nhập vào request attribute để Thymeleaf sử dụng
+        // Attach isLoggedIn attribute for request
         request.setAttribute("isLoggedIn", isLoggedIn);
+        log.debug("Request attribute 'isLoggedIn' set to: {}", isLoggedIn);
 
         return true;
     }
 
+    /**
+     * Clear authentication and invalidate session on logout or invalid token.
+     *
+     * @param response HttpServletResponse
+     */
+    private void clearAuthentication(HttpServletResponse response) {
+        SecurityContextHolder.clearContext();
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0); // Delete cookie
+        cookie.setPath("/"); // Apply to the entire domain
+        response.addCookie(cookie);
 
+        log.info("Cleared authentication and removed token cookie.");
+    }
 }
-
-

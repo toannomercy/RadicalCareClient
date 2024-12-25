@@ -1,9 +1,8 @@
 package org.example.radicalmotor.Services;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,51 +18,48 @@ public class CartService {
         this.restTemplate = restTemplate;
     }
 
-    public void addItemToCart(Map<String, Object> payload, HttpServletRequest request) {
+    public void addItemToCart(Map<String, Object> payload, String token) {
         String apiUrl = "http://localhost:8080/api/v1/cart/add";
 
         // Tạo header với token
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + getTokenFromCookie(request));
+        headers.set("Authorization", "Bearer " + token);
 
         // Gửi payload tới backend
         HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(payload, headers);
         restTemplate.postForObject(apiUrl, httpEntity, Void.class);
     }
 
-    // Lấy token từ cookie
-    private String getTokenFromCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("token".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
-    public Object getCartByUserId(String userId) {
+    public Object getCartByUserId(String userId, String token) {
         String apiUrl = "http://localhost:8080/api/v1/cart/" + userId;
-        return restTemplate.getForObject(apiUrl, Object.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        return restTemplate.getForObject(apiUrl, Object.class, requestEntity);
     }
 
-
-    public void updateCartItem(Object cartItem) {
+    public void updateCartItem(Object cartItem, String token) {
         String apiUrl = "http://localhost:8080/api/v1/cart/update";
-        restTemplate.put(apiUrl, cartItem);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(cartItem, headers);
+        restTemplate.put(apiUrl, requestEntity);
     }
 
-    public void removeItemFromCart(String itemId) {
+    public void removeItemFromCart(String itemId, String token) {
         String apiUrl = "http://localhost:8080/api/v1/cart/remove/" + itemId;
-        restTemplate.delete(apiUrl);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        restTemplate.exchange(apiUrl, HttpMethod.DELETE, requestEntity, Void.class);
     }
 
-    public void clearCart(String userId) {
+    public void clearCart(String userId, String token) {
         String apiUrl = "http://localhost:8080/api/v1/cart/clear/" + userId;
-        restTemplate.delete(apiUrl);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        restTemplate.exchange(apiUrl, HttpMethod.DELETE, requestEntity, Void.class);
     }
 }
-

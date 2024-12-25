@@ -1,6 +1,7 @@
 package org.example.radicalmotor.Configs;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.example.radicalmotor.Utils.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -46,9 +47,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**",
                                         "/js/**",
@@ -72,8 +70,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/vehicles/detail/**" ).permitAll()
                         .requestMatchers("/services").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/forgotPassword").permitAll()
-                        .requestMatchers( "/cart/**").hasAnyAuthority("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/cart/add").hasAnyAuthority("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/cart/add").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -82,7 +79,7 @@ public class SecurityConfig {
                         .failureUrl("/auth/login?error=true") // Redirect nếu login thất bại
                 )
                 .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
@@ -91,7 +88,9 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedPage("/error"))
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // Sử dụng entry point tùy chỉnh
+                        .accessDeniedPage("/error")
+                )
                 .httpBasic(httpBasic -> httpBasic.realmName("RadicalMotor"));
 
         return http.build();

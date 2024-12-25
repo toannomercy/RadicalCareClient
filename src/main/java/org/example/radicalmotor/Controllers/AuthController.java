@@ -1,7 +1,5 @@
 package org.example.radicalmotor.Controllers;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.example.radicalmotor.Dtos.JwtResponse;
@@ -12,7 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -73,13 +75,48 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> handleRegister(@RequestBody RegisterRequest registerRequest) {
+    public String registerUser(@RequestParam("fullName") String fullName,
+                               @RequestParam("username") String username,
+                               @RequestParam("email") String email,
+                               @RequestParam("password") String password,
+                               @RequestParam("address") String address,
+                               @RequestParam("phoneNumber") String phoneNumber,
+                               @RequestParam("doB") String doB,
+                               Model model) {
+        log.info("Received Registration Request: fullName={}, username={}, email={}, password={}, address={}, phoneNumber={}, doB={}",
+                fullName, username, email, password, address, phoneNumber, doB);
+        // Validate input
+        if (fullName.isEmpty() || username.isEmpty() || email.isEmpty()||phoneNumber.isEmpty() || password.isEmpty() || address.isEmpty() || doB.isEmpty()) {
+            model.addAttribute("errors", List.of("All fields are required."));
+            return "auth/register";
+        }
+
+        // Tạo đối tượng RegisterRequest
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setFullName(fullName);
+        registerRequest.setUsername(username);
+        registerRequest.setEmail(email);
+        registerRequest.setPassword(password);
+        registerRequest.setPhoneNumber(phoneNumber);
+        registerRequest.setAddress(address);
+
+        // Parse doB thành LocalDate
+        try {
+            registerRequest.setDoB(LocalDate.parse(doB));
+        } catch (Exception e) {
+            model.addAttribute("errors", List.of("Invalid date format for Date of Birth. Use YYYY-MM-DD."));
+            return "auth/register";
+        }
+
+        // Gọi phương thức register
         try {
             String successMessage = authApiService.register(registerRequest);
-            return ResponseEntity.ok(successMessage);
+            model.addAttribute("message", successMessage);
+            return "redirect:/auth/login";
         } catch (Exception e) {
+            model.addAttribute("errors", List.of("Registration failed. Please try again."));
             log.error("Registration failed: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed.");
+            return "auth/register";
         }
     }
 

@@ -4,6 +4,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.example.radicalmotor.Services.CartService;
+import org.example.radicalmotor.Utils.JwtUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +27,8 @@ import java.util.UUID;
 public class CartController {
 
     private final CartService cartService;
+    @Autowired
+    private JwtUtils jwtUtils;
 
     public CartController(CartService cartService) {
         this.cartService = cartService;
@@ -48,60 +52,43 @@ public class CartController {
                                              HttpServletRequest request) {
         Map<String, Object> response = new HashMap<>();
         try {
+            log.info("Request received to add item to cart: chassisNumber={}, vehicleName={}, color={}, price={}, quantity={}",
+                    chassisNumber, vehicleName, color, price, quantity);
+
             // Lấy token từ cookie
             String token = extractToken(request);
             if (token == null || token.isEmpty()) {
-                log.error("Token không tìm thấy.");
+                log.error("Token not found.");
                 response.put("status", "error");
                 response.put("message", "Bạn cần đăng nhập để thực hiện thao tác này.");
                 return response;
             }
 
-            log.info("Token hợp lệ: {}", token);
+            log.info("Token extracted successfully: {}", token);
 
-            // Kiểm tra Authentication trong SecurityContext
+            // Lấy userId từ Authentication
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null || !authentication.isAuthenticated()) {
-                log.error("SecurityContext không chứa Authentication hợp lệ.");
-                response.put("status", "error");
-                response.put("message", "Bạn không có quyền thực hiện thao tác này.");
-                return response;
-            }
+            String userId = jwtUtils.getUserIdFromToken(token);
 
-            log.info("Người dùng xác thực: {}", authentication.getName());
+            log.info("Authenticated userId: {}", userId);
 
-            // Tạo payload và gọi CartService
+            // Parse price
             Double parsedPrice = parseCurrency(price);
-            Map<String, Object> payload = new HashMap<>();
-            payload.put("id", UUID.randomUUID().toString());
-            Map<String, Object> vehicle = new HashMap<>();
-            vehicle.put("chassisNumber", chassisNumber);
-            vehicle.put("vehicleName", vehicleName);
-            vehicle.put("color", color);
-            vehicle.put("price", parsedPrice);
-            payload.put("vehicle", vehicle);
-            payload.put("userId", authentication.getName());
-            payload.put("quantity", quantity);
-            payload.put("price", parsedPrice);
-            payload.put("subtotal", parsedPrice * quantity);
+            log.info("Parsed price: {}", parsedPrice);
 
-            cartService.addItemToCart(payload, token);
+            // Gọi service để thêm sản phẩm
+            cartService.addItemToTemporaryCart(userId, chassisNumber, quantity, token);
+
             response.put("status", "success");
             response.put("message", "Thêm sản phẩm vào giỏ hàng thành công.");
         } catch (Exception e) {
-            log.error("Lỗi khi thêm sản phẩm vào giỏ hàng.", e);
+            log.error("Error adding item to cart.", e);
             response.put("status", "error");
             response.put("message", "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng.");
         }
         return response;
     }
 
-    /**
-     * Hàm lấy token từ header hoặc cookie.
-     *
-     * @param request HttpServletRequest
-     * @return Token hoặc null nếu không tìm thấy.
-     */
     private String extractToken(HttpServletRequest request) {
         // Ưu tiên lấy token từ header
         String token = request.getHeader("Authorization");

@@ -30,9 +30,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         Cookie[] cookies = request.getCookies();
         boolean isLoggedIn = false;
 
-        log.info("Processing request URI: {}", request.getRequestURI());
         Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
-        log.debug("Current SecurityContextHolder Authentication: {}", currentAuth);
 
         // Check if authentication is already set and valid
         if (currentAuth == null || currentAuth instanceof AnonymousAuthenticationToken) {
@@ -42,14 +40,12 @@ public class AuthInterceptor implements HandlerInterceptor {
             String authorizationHeader = request.getHeader("Authorization");
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 token = authorizationHeader.substring(7); // Remove "Bearer " prefix
-                log.debug("Found token in Authorization header: {}", token);
             } else {
                 // Fallback to check cookies for token
                 if (cookies != null) {
                     for (Cookie cookie : cookies) {
                         if ("token".equals(cookie.getName())) {
                             token = cookie.getValue();
-                            log.debug("Found token in cookie: {}", token);
                             break;
                         }
                     }
@@ -60,7 +56,6 @@ public class AuthInterceptor implements HandlerInterceptor {
             if (token != null) {
                 try {
                     if (jwtUtils.validateToken(token)) {
-                        log.info("Token is valid. Setting authentication in SecurityContextHolder.");
                         isLoggedIn = true;
 
                         // Set authentication into SecurityContextHolder
@@ -68,24 +63,20 @@ public class AuthInterceptor implements HandlerInterceptor {
                         log.debug("Updated SecurityContextHolder Authentication: {}",
                                 SecurityContextHolder.getContext().getAuthentication());
                     } else {
-                        log.warn("Invalid token: {}", token);
                         clearAuthentication(response);
                     }
                 } catch (Exception e) {
-                    log.error("Error validating token: {}", e.getMessage());
                     clearAuthentication(response);
                 }
             } else {
                 log.info("No token found in request headers or cookies.");
             }
         } else {
-            log.info("Authentication already exists in SecurityContextHolder: {}", currentAuth);
             isLoggedIn = true;
         }
 
         // Attach isLoggedIn attribute for request
         request.setAttribute("isLoggedIn", isLoggedIn);
-        log.debug("Request attribute 'isLoggedIn' set to: {}", isLoggedIn);
 
         return true;
     }
@@ -101,7 +92,5 @@ public class AuthInterceptor implements HandlerInterceptor {
         cookie.setMaxAge(0); // Delete cookie
         cookie.setPath("/"); // Apply to the entire domain
         response.addCookie(cookie);
-
-        log.info("Cleared authentication and removed token cookie.");
     }
 }

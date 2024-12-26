@@ -1,5 +1,6 @@
 package org.example.radicalmotor.Services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.radicalmotor.Dtos.ApiResponse;
 import org.example.radicalmotor.Dtos.FilterGetVm;
 import org.example.radicalmotor.Dtos.SearchVehicleGetVm;
@@ -14,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.*;
-
+@Slf4j
 @Service
 public class VehicleService {
 
@@ -45,6 +46,7 @@ public class VehicleService {
 
     public VehicleDto getVehicleDetail(String chassisNumber) {
         String url = apiBaseUrl + "/api/v1/vehicle/" + chassisNumber;
+        log.info("Calling API to get vehicle detail from URL: {}", url);
 
         ResponseEntity<ApiResponse<VehicleDto>> response = restTemplate.exchange(
                 url,
@@ -53,19 +55,16 @@ public class VehicleService {
                 new ParameterizedTypeReference<ApiResponse<VehicleDto>>() {}
         );
 
-        // Lấy dữ liệu từ response
-        VehicleDto vehicle = Objects.requireNonNull(response.getBody()).getData();
+        // Log dữ liệu response từ BE
+        ApiResponse<VehicleDto> apiResponse = response.getBody();
+        log.info("Response from BE: {}", apiResponse);
+
+        // Lấy dữ liệu từ response và log giá trị của price
+        VehicleDto vehicle = Objects.requireNonNull(apiResponse).getData();
+        log.info("Vehicle detail received: {}", vehicle);
 
         return vehicle;
     }
-
-
-
-
-
-
-
-
 
 
 //    public List<FilterGetVm> filterVehicles(Double minPrice, Double maxPrice, String segment, int page, int size) {

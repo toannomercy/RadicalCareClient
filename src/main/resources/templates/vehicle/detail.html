@@ -53,7 +53,9 @@
             <div class="col-md-5">
                 <div class="card border-0 shadow-sm p-4">
                     <h2 class="text-primary mb-4" th:text="${vehicle.vehicleName}"></h2>
-                    <p><strong>Giá:</strong> <span class="text-danger fw-bold" th:text="${vehicle.price}"></span></p>
+                    <p><strong>Giá:</strong>
+                        <span th:text="${T(org.example.radicalmotor.Utils.CurrencyUtils).formatCurrency(vehicle.price)}"></span>
+                    </p>
                     <p><strong>Màu sắc:</strong> <span th:text="${vehicle.color}"></span></p>
                     <p><strong>Phân khúc:</strong> <span th:text="${vehicle.segment}"></span></p>
                     <p><strong>Mô Tả:</strong> <span class="text-secondary" th:text="${vehicle.description}"></span></p>

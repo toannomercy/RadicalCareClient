@@ -22,7 +22,7 @@ public class SecurityConfig {
     private final Dotenv dotenv = Dotenv.load();
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {
-        String clientId = dotenv.get("OAUTH2_GOOGLE_CLIENT_ID");
+        String clientId = dotenv.get("OAUTH2_GOOGLE_CLIENT_ID_WEB");
         String clientSecret = dotenv.get("OAUTH2_GOOGLE_CLIENT_SECRET");
 
         if (clientId == null || clientSecret == null) {

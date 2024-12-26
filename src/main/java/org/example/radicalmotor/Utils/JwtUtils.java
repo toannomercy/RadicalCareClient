@@ -85,13 +85,11 @@ public class JwtUtils {
             throw e;
         }
     }
+    public String getUserIdFromToken(String token) {
+        Claims claims = parseToken(token);
+        return claims.get("userId", String.class); // Trích xuất userId từ claims
+    }
 
-    /**
-     * Generate authentication from token
-     *
-     * @param token JWT token
-     * @return UsernamePasswordAuthenticationToken
-     */
     public UsernamePasswordAuthenticationToken getAuthentication(String token) {
         log.debug("Generating authentication from token...");
         Claims claims = getClaims(token);

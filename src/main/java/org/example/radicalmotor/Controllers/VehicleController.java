@@ -1,5 +1,6 @@
 package org.example.radicalmotor.Controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.radicalmotor.Dtos.ApiResponse;
 import org.example.radicalmotor.Dtos.FilterGetVm;
 import org.example.radicalmotor.Dtos.SearchVehicleGetVm;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-
+@Slf4j
 @Controller
 @RequestMapping("/vehicles")
 public class VehicleController {
@@ -51,13 +52,17 @@ public class VehicleController {
     @GetMapping("/detail/{id}")
     public String getVehicleDetail(@PathVariable("id") String chassisNumber, Model model) {
         try {
+            log.info("Fetching vehicle detail for chassisNumber: {}", chassisNumber);
             VehicleDto vehicle = vehicleService.getVehicleDetail(chassisNumber);
+            log.info("Vehicle data passed to model: {}", vehicle);
             model.addAttribute("vehicle", vehicle);
         } catch (Exception e) {
+            log.error("Error fetching vehicle detail", e);
             model.addAttribute("errorMessage", "Không tìm thấy thông tin cho xe có mã: " + chassisNumber);
         }
         return "vehicle/detail";
     }
+
 
 //    @GetMapping()
 //    public String getFilteredAndSearchedVehicles(

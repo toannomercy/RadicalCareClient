@@ -6,6 +6,7 @@ import org.example.radicalmotor.Dtos.LoginRequest;
 import org.example.radicalmotor.Dtos.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -29,12 +30,26 @@ public class AuthApiService {
     }
 
     public JwtResponse login(LoginRequest loginRequest) {
-        String url = baseUrl + "/api/v1/auth/login";
+        String url = baseUrl + "/api/v1/auth/login-web";
         return restTemplate.postForObject(url, loginRequest, JwtResponse.class);
     }
 
+    public JwtResponse googleLogin(String code) {
+        String url = "http://localhost:8080/api/v1/auth/oauth/google"; // URL của BE
+        Map<String, String> request = new HashMap<>();
+        request.put("code", code);
+
+        try {
+            // Gửi request POST tới BE
+            ResponseEntity<JwtResponse> response = restTemplate.postForEntity(url, request, JwtResponse.class);
+            return response.getBody();
+        } catch (Exception e) {
+            throw new RuntimeException("Google Login failed: " + e.getMessage());
+        }
+    }
+
     public void logout() {
-        String url = baseUrl + "/api/v1/auth/logout";
+        String url = baseUrl + "/api/v1/auth/logout-web";
         restTemplate.postForObject(url, null, Void.class);
     }
 

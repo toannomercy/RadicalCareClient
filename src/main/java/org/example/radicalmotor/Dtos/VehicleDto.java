@@ -18,5 +18,15 @@ public class VehicleDto {
     private String description;
     private String price;
     private List<String> imageUrls;
+
+    @Override
+    public String toString() {
+        return "VehicleDto{" +
+                "chassisNumber='" + chassisNumber + '\'' +
+                ", vehicleName='" + vehicleName + '\'' +
+                ", price='" + price + '\'' +
+                ", otherFields... }";
+    }
+
 }
 

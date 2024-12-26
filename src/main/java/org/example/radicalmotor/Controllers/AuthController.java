@@ -43,6 +43,7 @@ public class AuthController {
             // Lưu thông tin người dùng vào session
             session.setAttribute("username", jwtResponse.getFullName());
             session.setAttribute("role", jwtResponse.getRole());
+            session.setAttribute("userId", jwtResponse.getUserId());
 
             // Trả token dưới dạng Bearer Token trong response header
             return ResponseEntity.ok()
@@ -53,6 +54,27 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password.");
         }
     }
+    @GetMapping("/oauth2/code/google")
+    public String handleGoogleLoginRedirect(@RequestParam("code") String code, HttpSession session, Model model) {
+        try {
+            // Trao đổi mã code với BE để lấy thông tin người dùng
+            JwtResponse jwtResponse = authApiService.googleLogin(code);
+
+            // Lưu thông tin người dùng vào session
+            session.setAttribute("username", jwtResponse.getFullName());
+            session.setAttribute("role", jwtResponse.getRole());
+            session.setAttribute("userId", jwtResponse.getUserId());
+
+            // Chuyển hướng người dùng đến dashboard (FE client)
+            return "redirect:/";
+        } catch (Exception e) {
+            log.error("Google Login failed: {}", e.getMessage());
+            model.addAttribute("error", "Google Login failed. Please try again.");
+            return "auth/login";
+        }
+    }
+
+
 
     @PostMapping("/logout")
     public ResponseEntity<?> handleLogout(HttpSession session) {

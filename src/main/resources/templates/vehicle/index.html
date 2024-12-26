@@ -23,9 +23,9 @@
                                 <h6 class="card-title mb-0 text-uppercase text-secondary" th:text="${vehicle.vehicleName}"></h6>
                                 <p class="card-text mb-0 text-uppercase text-dark" th:text="${vehicle.segment}"></p>
                             </div>
-                            <div>
-                                <h6 class="card-text mb-0 text-primary" th:text="${vehicle.price}"></h6>
-                            </div>
+                            <p><strong>Giá:</strong>
+                                <span th:text="${T(org.example.radicalmotor.Utils.CurrencyUtils).formatCurrency(vehicle.price)}"></span>
+                            </p>
                         </div>
                     </div>
                 </a>

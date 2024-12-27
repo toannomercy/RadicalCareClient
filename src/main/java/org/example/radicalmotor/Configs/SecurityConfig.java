@@ -66,6 +66,7 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                         .requestMatchers("/products").permitAll()
+                        .requestMatchers("/admin/**").permitAll()
                         .requestMatchers(("/vehicles")).permitAll()
                         .requestMatchers(HttpMethod.GET,"/vehicles/detail/**" ).permitAll()
                         .requestMatchers("/services").permitAll()

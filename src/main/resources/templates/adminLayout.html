@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="en">
 <head th:fragment="css">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,11 +9,12 @@
     <meta name="author" content="">
     <title>RadicalMotor - Admin</title>
     <!-- AOS CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" />
-    <link th:href="@{../../css/bootstrap.min.css}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css"/>
+    <link th:href="@{../../css/bootstrap.min.css}" rel="stylesheet"/>
     <!-- Custom fonts for this template-->
     <link th:href="@{../../Theme/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
     <!-- Custom styles for this template-->
     <link th:href="@{../../Theme/css/sb-admin-2.min.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -21,7 +23,8 @@
 <!-- Page Wrapper -->
 <div id="wrapper">
     <!-- Sidebar -->
-    <ul th:fragment="sidebar" class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar" data-aos="fade-right">
+    <ul th:fragment="sidebar" class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+        id="accordionSidebar" data-aos="fade-right">
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/admin}">
             <div class="sidebar-brand-icon rotate-n-15">
@@ -50,15 +53,15 @@
                 <i class="bi bi-bicycle"></i>
                 <span>Vehicles</span>
             </a>
-            <a class="nav-link collapsed" th:href="@{/admin/supplier}" >
+            <a class="nav-link collapsed" th:href="@{/admin/supplier}">
                 <i class="bi bi-buildings-fill"></i>
                 <span>Suppliers</span>
             </a>
-            <a class="nav-link collapsed" th:href="@{/admin/vehicleType}" >
+            <a class="nav-link collapsed" th:href="@{/admin/vehicleType}">
                 <i class="bi bi-tags-fill"></i>
                 <span>VehicleTypes</span>
             </a>
-            <a class="nav-link collapsed" th:href="@{/admin/cost}" >
+            <a class="nav-link collapsed" th:href="@{/admin/cost}">
                 <i class="bi bi-coin"></i>
                 <span>CostTable</span>
             </a>
@@ -80,7 +83,8 @@
         <!-- Main Content -->
         <div id="content">
             <!-- Topbar -->
-            <nav th:fragment="navbar" style="z-index: 1100;" class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow" data-aos="fade-down">
+            <nav th:fragment="navbar" style="z-index: 1100;"
+                 class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow" data-aos="fade-down">
                 <!-- Sidebar Toggle (Topbar) -->
                 <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                     <i class="fa fa-bars"></i>
@@ -88,7 +92,8 @@
                 <!-- Topbar Search -->
                 <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                     <div class="input-group">
-                        <input name="searchString" type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                        <input name="searchString" type="text" class="form-control bg-light border-0 small"
+                               placeholder="Search for..."
                                aria-label="Search" aria-describedby="basic-addon2">
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="submit">
@@ -188,41 +193,53 @@
                             </h6>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" th:src="@{../../Theme/img/undraw_profile_1.svg}" alt="...">
+                                    <img class="rounded-circle" th:src="@{../../Theme/img/undraw_profile_1.svg}"
+                                         alt="...">
                                     <div class="status-indicator bg-success"></div>
                                 </div>
                                 <div class="font-weight-bold">
-                                    <div class="text-truncate">Hi there! I am wondering if you can help me with a problem I've been having.</div>
+                                    <div class="text-truncate">Hi there! I am wondering if you can help me with a
+                                        problem I've been having.
+                                    </div>
                                     <div class="small text-gray-500">Emily Fowler · 58m</div>
                                 </div>
                             </a>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" th:src="@{../../Theme/img/undraw_profile_2.svg}" alt="...">
+                                    <img class="rounded-circle" th:src="@{../../Theme/img/undraw_profile_2.svg}"
+                                         alt="...">
                                     <div class="status-indicator"></div>
                                 </div>
                                 <div>
-                                    <div class="text-truncate">I have the photos that you ordered last month, how would you like them sent to you?</div>
+                                    <div class="text-truncate">I have the photos that you ordered last month, how would
+                                        you like them sent to you?
+                                    </div>
                                     <div class="small text-gray-500">Jae Chun · 1d</div>
                                 </div>
                             </a>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" th:src="@{../../Theme/img/undraw_profile_3.svg}" alt="...">
+                                    <img class="rounded-circle" th:src="@{../../Theme/img/undraw_profile_3.svg}"
+                                         alt="...">
                                     <div class="status-indicator bg-warning"></div>
                                 </div>
                                 <div>
-                                    <div class="text-truncate">Last month's report looks great, I am very happy with the progress so far, keep up the good work!</div>
+                                    <div class="text-truncate">Last month's report looks great, I am very happy with the
+                                        progress so far, keep up the good work!
+                                    </div>
                                     <div class="small text-gray-500">Morgan Alvarez · 2d</div>
                                 </div>
                             </a>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" th:src="@{../../Theme/img/undraw_profile_3.svg}" alt="...">
+                                    <img class="rounded-circle" th:src="@{../../Theme/img/undraw_profile_3.svg}"
+                                         alt="...">
                                     <div class="status-indicator bg-success"></div>
                                 </div>
                                 <div>
-                                    <div class="text-truncate">Am I a good boy? The reason I ask is because someone told me that people say this to all dogs, even if they aren't good...</div>
+                                    <div class="text-truncate">Am I a good boy? The reason I ask is because someone told
+                                        me that people say this to all dogs, even if they aren't good...
+                                    </div>
                                     <div class="small text-gray-500">Chicken the Dog · 2w</div>
                                 </div>
                             </a>
@@ -287,7 +304,8 @@
     <i class="fas fa-angle-up"></i>
 </a>
 <!-- Logout Modal-->
-<div th:fragment="logout" class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div th:fragment="logout" class="modal fade" id="logoutModal" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -300,7 +318,7 @@
             <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <form th:action="@{/logout}" method="post" >
+                <form th:action="@{/auth/logout}" method="post">
                     <button type="submit" class="btn btn-primary" sec:authorize="isAuthenticated()">Logout
                     </button>
                 </form>

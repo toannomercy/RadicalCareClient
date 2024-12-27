@@ -50,48 +50,43 @@
 </div>
 <th:block th:replace="~{layout::footer}"></th:block>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const loginForm = document.getElementById('loginForm');
-        const errorMessage = document.getElementById('errorMessage');
+    loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-        loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
 
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
+        if (!username || !password) {
+            showError('Please fill in all fields.');
+            return;
+        }
 
-            if (!username || !password) {
-                showError('Please fill in all fields.');
-                return;
-            }
+        try {
+            const response = await fetch('http://localhost:8080/api/v1/auth/login-web', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // Gửi cookie
+                body: JSON.stringify({ username, password }),
+            });
 
-            try {
-                const response = await fetch('http://localhost:8080/api/v1/auth/login-web', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include', // Gửi cookie
-                    body: JSON.stringify({ username, password }),
-                });
+            if (response.ok) {
+                const data = await response.json();
 
-                if (response.ok) {
-                    const data = await response.json();
-                    // alert(`Welcome ${data.fullName}!`);
-                    window.location.href = '/'; // Redirect sau khi đăng nhập thành công
+                // Điều hướng dựa trên role
+                if (data.role === 'ADMIN') {
+                    window.location.href = '/admin/index'; // Redirect đến trang admin
                 } else {
-                    const errorData = await response.json();
-                    showError(errorData.message || 'Login failed. Please try again.');
+                    window.location.href = '/'; // Redirect đến trang user
                 }
-            } catch (error) {
-                console.error('Error during login:', error);
-                showError('An unexpected error occurred. Please try again.');
+            } else {
+                const errorData = await response.json();
+                showError(errorData.message || 'Login failed. Please try again.');
             }
-        });
-
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.remove('d-none');
+        } catch (error) {
+            console.error('Error during login:', error);
+            showError('An unexpected error occurred. Please try again.');
         }
     });
 

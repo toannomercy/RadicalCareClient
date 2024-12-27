@@ -30,7 +30,12 @@ public class AuthApiService {
     }
 
     public JwtResponse login(LoginRequest loginRequest) {
-        String url = baseUrl + "/api/v1/auth/login-web";
+        String url = null;
+        try {
+            url = baseUrl + "/api/v1/auth/login-web";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return restTemplate.postForObject(url, loginRequest, JwtResponse.class);
     }
 

@@ -17,26 +17,58 @@
                                 <li th:each="error : ${errors}" th:text="${error}" class="text-danger text-start"></li>
                             </ul>
                         </div>
+                        <!-- Full Name -->
+                        <div class="form-group mb-4">
+                            <label for="fullName"></label>
+                            <input type="text" class="form-control" required id="fullName" name="fullName"
+                                   placeholder="Enter your full name" maxlength="100"
+                                   pattern=".{1,100}" title="Full name must be less than 100 characters">
+                        </div>
+                        <!-- Email -->
                         <div class="form-group mb-4">
                             <label for="email"></label>
-                            <input type="email" class="form-control" required id="email" name="email" placeholder="Enter your email">
+                            <input type="email" class="form-control" required id="email" name="email"
+                                   placeholder="Enter your email"
+                                   title="Please enter a valid email address">
                         </div>
+                        <!-- Username -->
                         <div class="form-group mb-4">
                             <label for="username"></label>
-                            <input type="text" class="form-control" required id="username" name="username" placeholder="Enter your username">
+                            <input type="text" class="form-control" required id="username" name="username"
+                                   placeholder="Enter your username" minlength="5" maxlength="50"
+                                   pattern=".{5,50}" title="Username must be between 5 and 50 characters">
                         </div>
+                        <!-- Password -->
                         <div class="form-group mb-4 position-relative">
-                            <input type="password" id="password" class="form-control" placeholder="Password" required>
+                            <input type="password" id="password" name="password" class="form-control"
+                                   placeholder="Password" required minlength="3"
+                                   title="Password must be at least 3 characters">
                             <span id="togglePassword"
                                   class="position-absolute top-50 end-0 translate-middle-y me-3"
                                   style="cursor: pointer;">
                                   <i class="bi bi-eye"></i>
                             </span>
                         </div>
+                        <!-- Address -->
                         <div class="form-group mb-4">
-                            <label for="phone"></label>
-                            <input type="tel" class="form-control" required id="phone" name="phone" placeholder="Enter your phone">
+                            <label for="address"></label>
+                            <input type="text" class="form-control" required id="address" name="address"
+                                   placeholder="Enter your address">
                         </div>
+                        <!-- Phone -->
+                        <div class="form-group mb-4">
+                            <label for="phoneNumber"></label>
+                            <input type="tel" class="form-control" required id="phoneNumber" name="phoneNumber"
+                                   placeholder="Enter your phone" pattern="^[0-9]{10,15}$"
+                                   title="Phone number must be between 10 and 15 digits">
+                        </div>
+                        <!-- Date of Birth -->
+                        <div class="form-group mb-4">
+                            <label for="doB"></label>
+                            <input type="date" class="form-control" required id="doB" name="doB"
+                                   max="" title="Date of birth must be in the past">
+                        </div>
+                        <!-- Submit Button -->
                         <div class="d-grid gap-2 form-action">
                             <button type="submit" class="btn btn-primary btn-lg btn-block">Sign up</button>
                             <p class="mt-3 mb-0">Already have an account? <a class="text-info text-center" th:href="@{/auth/login}">Login</a></p>
@@ -51,14 +83,15 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const doBField = document.getElementById('doB');
+        const today = new Date().toISOString().split('T')[0];
+        doBField.setAttribute('max', today); // Set max date for date of birth field
+
         const passwordInput = document.getElementById('password');
         const togglePassword = document.getElementById('togglePassword');
-
         togglePassword.addEventListener('click', () => {
             const isPasswordVisible = passwordInput.type === 'text';
-
             passwordInput.type = isPasswordVisible ? 'password' : 'text';
-
             togglePassword.innerHTML = isPasswordVisible
                 ? '<i class="bi bi-eye"></i>'
                 : '<i class="bi bi-eye-slash"></i>';

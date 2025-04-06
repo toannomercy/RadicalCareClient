@@ -32,5 +32,15 @@ public class VehicleDto {
         }
     }
 
+
+    @Override
+    public String toString() {
+        return "VehicleDto{" +
+                "chassisNumber='" + chassisNumber + '\'' +
+                ", vehicleName='" + vehicleName + '\'' +
+                ", price='" + price + '\'' +
+                ", otherFields... }";
+    }
+
 }
 

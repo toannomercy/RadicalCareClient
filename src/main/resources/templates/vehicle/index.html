@@ -76,7 +76,7 @@
                                     <p class="card-text mb-0 text-uppercase text-dark" th:text="${vehicle.color}"></p>
                                 </div>
                                 <div>
-                                    <h6 class="card-text mb-0 text-primary" th:text="${vehicle.getPrice()}"></h6>
+                                    <h6 class="card-text mb-0 text-primary" th:text="${#numbers.formatDecimal(vehicle.getPriceAsDouble(), 0, 'COMMA', 0, 'POINT')} + ' ₫'"></h6>
                                 </div>
                             </div>
                         </div>
@@ -190,7 +190,7 @@
                             <h6>${vehicle.vehicleName}</h6>
                             <p>${vehicle.segment}</p>
                             <p>${vehicle.color}</p>
-                            <h6>${vehicle.price}</h6>
+                            <h6>${Number(vehicle.price).toLocaleString()} ₫</h6>
                         </div>
                     </div>
                 </div>

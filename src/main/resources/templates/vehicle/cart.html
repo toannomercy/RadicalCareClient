@@ -48,8 +48,8 @@
                                             <button type="submit" class="btn btn-primary btn-sm ms-2">Update</button>
                                         </div>
                                     </form>
-                                    <p class="mt-2">Price: <span th:text="${item.price}">0.00</span></p>
-                                    <p>Subtotal: <span th:text="${item.subtotal}">0.00</span></p>
+                                    <p class="mt-2">Price: <span th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0.00</span></p>
+                                    <p>Subtotal: <span th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0.00</span></p>
                                 </div>
                             </div>
                             <!-- End Single Item -->
@@ -96,15 +96,15 @@
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                                     <span>Subtotal:</span>
-                                    <span th:text="${cart.totalCost}">0.00</span>
+                                    <span th:text="${#numbers.formatDecimal(cart.totalCost, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0.00</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                                     <span>VAT (10%):</span>
-                                    <span th:text="${cart.totalCost * 0.1}">0.00</span>
+                                    <span th:text="${#numbers.formatDecimal(cart.totalCost * 0.1, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0.00</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                                     <strong>Total:</strong>
-                                    <strong th:text="${cart.totalCost * 1.1}">0.00</strong>
+                                    <strong th:text="${#numbers.formatDecimal(cart.totalCost * 1.1, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0.00</strong>
                                 </li>
                             </ul>
                             <a href="/checkout" class="btn btn-primary btn-lg btn-block">

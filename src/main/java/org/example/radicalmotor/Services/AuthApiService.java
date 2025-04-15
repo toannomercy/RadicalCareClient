@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +60,25 @@ public class AuthApiService {
     }
 
     public String register(RegisterRequest registerRequest) {
-        return restTemplate.postForObject(baseUrl + "/api/v1/auth/register", registerRequest, String.class);
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    baseUrl + "/api/v1/auth/register", 
+                    registerRequest, 
+                    String.class
+            );
+            return response.getBody();
+        } catch (HttpClientErrorException ex) {
+            // Extract the error message from the response body
+            if (ex.getStatusCode().value() == 409) {
+                // Conflict - Username already taken
+                return ex.getResponseBodyAsString();
+            } else if (ex.getStatusCode().value() == 400) {
+                // Bad Request - Validation errors
+                return ex.getResponseBodyAsString();
+            } else {
+                throw ex;
+            }
+        }
     }
 
     public void forgotPassword(String email) {

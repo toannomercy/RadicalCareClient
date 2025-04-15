@@ -11,6 +11,9 @@
             <div class="card shadow" style="border-radius: 1rem;">
                 <div class="card-body p-5 text-center">
                     <h3>Login to <strong class="mb-4 text-primary">RadicalMotor</strong></h3>
+                    <div th:if="${param.registered}" class="alert alert-success">
+                        Registration successful! Please login with your new account.
+                    </div>
                     <form id="loginForm">
                         <div id="errorMessage" class="alert alert-danger d-none"></div>
                         <div class="form-group mb-4">
@@ -50,6 +53,13 @@
 </div>
 <th:block th:replace="~{layout::footer}"></th:block>
 <script>
+    // Function to show error messages
+    function showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = message;
+        errorDiv.classList.remove('d-none');
+    }
+
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 

@@ -11,38 +11,51 @@
                 <div class="card-body p-5 text-center">
                     <h3>Register to <strong>RadicalMotor</strong></h3>
                     <p class="mb-4 text-secondary">Welcome to RadicalMotor, please register to continue.</p>
-                    <form th:action="@{/auth/register}" method="post">
-                        <div th:if="${errors}" class="alert alert-danger justify-content-center" role="alert">
-                            <ul>
-                                <li th:each="error : ${errors}" th:text="${error}" class="text-danger text-start"></li>
-                            </ul>
+                    
+                    <!-- Error display area -->
+                    <div id="errorContainer" class="alert alert-danger d-none" role="alert">
+                        <ul id="errorList" class="mb-0">
+                        </ul>
+                        <div id="errorItems" class="mb-0">
                         </div>
+                    </div>
+                    
+                    <form id="registerForm" novalidate>
                         <!-- Full Name -->
                         <div class="form-group mb-4">
                             <label for="fullName"></label>
                             <input type="text" class="form-control" required id="fullName" name="fullName"
                                    placeholder="Enter your full name" maxlength="100"
-                                   pattern=".{1,100}" title="Full name must be less than 100 characters">
+                                   pattern=".{1,100}" title="Full name must be less than 100 characters"
+                                   data-error-message="Full name is required">
                         </div>
                         <!-- Email -->
                         <div class="form-group mb-4">
                             <label for="email"></label>
                             <input type="email" class="form-control" required id="email" name="email"
                                    placeholder="Enter your email"
-                                   title="Please enter a valid email address">
+                                   title="Please enter a valid email address"
+                                   data-error-message="Email is required" 
+                                   data-format-error="Must be a valid email address">
                         </div>
                         <!-- Username -->
                         <div class="form-group mb-4">
                             <label for="username"></label>
                             <input type="text" class="form-control" required id="username" name="username"
                                    placeholder="Enter your username" minlength="5" maxlength="50"
-                                   pattern=".{5,50}" title="Username must be between 5 and 50 characters">
+                                   pattern="[a-zA-Z0-9_]+" title="Username must contain only letters, numbers and underscores"
+                                   data-error-message="Username is required"
+                                   data-length-error="Username must be between 1 and 50 characters"
+                                   data-format-error="Username cannot contain special characters"
+                                   autocomplete="new-username" translate="no">
                         </div>
                         <!-- Password -->
                         <div class="form-group mb-4 position-relative">
                             <input type="password" id="password" name="password" class="form-control"
                                    placeholder="Password" required minlength="3"
-                                   title="Password must be at least 3 characters">
+                                   title="Password must be at least 3 characters"
+                                   data-error-message="Password is required"
+                                   autocomplete="new-password">
                             <span id="togglePassword"
                                   class="position-absolute top-50 end-0 translate-middle-y me-3"
                                   style="cursor: pointer;">
@@ -53,20 +66,26 @@
                         <div class="form-group mb-4">
                             <label for="address"></label>
                             <input type="text" class="form-control" required id="address" name="address"
-                                   placeholder="Enter your address">
+                                   placeholder="Enter your address"
+                                   data-error-message="Address is required">
                         </div>
                         <!-- Phone -->
                         <div class="form-group mb-4">
                             <label for="phoneNumber"></label>
                             <input type="tel" class="form-control" required id="phoneNumber" name="phoneNumber"
-                                   placeholder="Enter your phone" pattern="^[0-9]{10,15}$"
-                                   title="Phone number must be between 10 and 15 digits">
+                                   placeholder="Enter your phone" pattern="^[0-9]{9,10}$"
+                                   title="Phone number must be between 9 and 10 digits"
+                                   data-error-message="Phone is required"
+                                   data-format-error="Phone must be number"
+                                   data-length-error="Phone must be 9-10 characters">
                         </div>
                         <!-- Date of Birth -->
                         <div class="form-group mb-4">
                             <label for="doB"></label>
                             <input type="date" class="form-control" required id="doB" name="doB"
-                                   max="" title="Date of birth must be in the past">
+                                   max="" title="Date of birth must be in the past"
+                                   data-error-message="Date of birth is required"
+                                   data-format-error="Invalid date format">
                         </div>
                         <!-- Submit Button -->
                         <div class="d-grid gap-2 form-action">
@@ -81,12 +100,101 @@
 </div>
 <th:block th:replace="~{layout::footer}"></th:block>
 
+<style>
+    /* Override any browser extension or system-level styling */
+    #username::placeholder {
+        content: "Enter your username" !important;
+    }
+    
+    /* Hide any potential dropdown suggestions */
+    #username::-webkit-credentials-auto-fill-button,
+    #username:-webkit-autofill-strong-password-label,
+    #username::-webkit-password-manager-icon,
+    #username::-internal-credentials-auto-fill-button {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        opacity: 0 !important;
+        clip: rect(0 0 0 0) !important;
+        clip-path: inset(50%) !important;
+    }
+    
+    /* Force English text for username field */
+    #username {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    }
+    
+    /* Prevent password manager overlays */
+    input:-webkit-autofill {
+        background-clip: content-box !important;
+    }
+    
+    /* Prevent autofill background coloring */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Fix for any language/placeholder issues
+        document.querySelectorAll('input, label').forEach(el => {
+            if (el.placeholder && el.placeholder.includes('Đăng ký')) {
+                el.placeholder = "Enter your " + el.id;
+            }
+            if (el.textContent && el.textContent.includes('Đăng ký')) {
+                el.textContent = "";
+            }
+            
+            // Prevent browser validation tooltips
+            if (el.tagName === 'INPUT') {
+                el.addEventListener('invalid', (e) => {
+                    e.preventDefault();
+                });
+            }
+        });
+        
+        // Fix username field - more aggressive approach
+        const usernameInput = document.getElementById('username');
+        if (usernameInput) {
+            // Force the placeholder to be in English
+            usernameInput.placeholder = "Enter your username";
+            
+            // Reset any label that might have been set by browser/extension
+            const usernameLabel = document.querySelector('label[for="username"]');
+            if (usernameLabel) {
+                usernameLabel.textContent = "";
+            }
+            
+            // Try multiple autocomplete settings to confuse password managers
+            usernameInput.setAttribute('autocomplete', 'new-username');
+            
+            // Prevent browser translation
+            usernameInput.setAttribute('translate', 'no');
+            
+            // Add additional attributes to prevent autofill suggestions
+            usernameInput.setAttribute('data-form-type', 'other');
+            usernameInput.setAttribute('data-lpignore', 'true');
+            
+            // Remove password manager overlays after small delay
+            setTimeout(() => {
+                const overlays = document.querySelectorAll('.autofill-overlay, [class*="password-manager"]');
+                overlays.forEach(overlay => overlay.remove());
+                
+                // Also re-focus to force redraw
+                usernameInput.blur();
+                usernameInput.focus();
+            }, 100);
+        }
+        
+        // Set max date for date of birth
         const doBField = document.getElementById('doB');
         const today = new Date().toISOString().split('T')[0];
-        doBField.setAttribute('max', today); // Set max date for date of birth field
+        doBField.setAttribute('max', today);
 
+        // Password toggle functionality
         const passwordInput = document.getElementById('password');
         const togglePassword = document.getElementById('togglePassword');
         togglePassword.addEventListener('click', () => {
@@ -96,10 +204,262 @@
                 ? '<i class="bi bi-eye"></i>'
                 : '<i class="bi bi-eye-slash"></i>';
         });
+        
+        // Handle form submission
+        const registerForm = document.getElementById('registerForm');
+        registerForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            // Hide any previous error messages
+            const errorContainer = document.getElementById('errorContainer');
+            const errorList = document.getElementById('errorList');
+            errorContainer.classList.add('d-none');
+            errorList.innerHTML = '';
+            
+            // Force validation before collecting form data
+            const isValid = validateForm();
+            if (!isValid) {
+                return; // Don't proceed if validation fails
+            }
+            
+            // Get form data
+            const formData = {
+                fullName: document.getElementById('fullName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                username: document.getElementById('username').value.trim(),
+                password: document.getElementById('password').value,
+                address: document.getElementById('address').value.trim(),
+                phoneNumber: document.getElementById('phoneNumber').value.trim(),
+                doB: document.getElementById('doB').value
+            };
+            
+            try {
+                // Add timeout controller to prevent request from hanging
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                
+                const response = await fetch('http://localhost:8080/api/v1/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                    signal: controller.signal
+                });
+                
+                // Clear timeout since request completed
+                clearTimeout(timeoutId);
+                
+                // Handle the response
+                if (response.status === 201) {
+                    // Success - redirect to login page
+                    window.location.href = '/auth/login?registered=true';
+                } else {
+                    // Error handling based on status code
+                    let errorData;
+                    try {
+                        // Check content type before attempting to parse JSON
+                        const contentType = response.headers.get('content-type');
+                        if (contentType && contentType.includes('application/json')) {
+                            errorData = await response.json();
+                        } else {
+                            // Handle non-JSON responses (e.g. HTML error pages)
+                            const text = await response.text();
+                            errorData = { 
+                                message: text.length > 100 ? 
+                                    `Server error (${response.status})` : 
+                                    text || `Server error (${response.status})`
+                            };
+                        }
+                    } catch (e) {
+                        console.error('Error parsing response:', e);
+                        // Set a more specific error message based on status code
+                        if (response.status === 409) {
+                            errorData = { message: "Username or email already exists" };
+                        } else if (response.status === 400) {
+                            errorData = { message: "Invalid form data" };
+                        } else if (response.status === 500) {
+                            errorData = { message: "Server error - please try again later" };
+                        } else {
+                            errorData = { message: `Error: ${response.status} - Please try again` };
+                        }
+                    }
+                    
+                    if (response.status === 409) {
+                        // Username or email already taken
+                        if (errorData.message && errorData.message.toLowerCase().includes('username')) {
+                            showError('Username already exists');
+                        } else if (errorData.message && errorData.message.toLowerCase().includes('email')) {
+                            showError('Email already exists');
+                        } else {
+                            showError(mapErrorMessage(errorData.message) || "Username is already taken");
+                        }
+                    } else if (response.status === 400) {
+                        // Validation errors
+                        if (errorData.errors && Array.isArray(errorData.errors)) {
+                            // Multiple validation errors
+                            const standardizedErrors = processErrors(errorData.errors);
+                            standardizedErrors.forEach(error => {
+                                showError(error);
+                            });
+                        } else {
+                            // Single error message
+                            showError(mapErrorMessage(errorData.message) || "Please check your information and try again");
+                        }
+                    } else {
+                        // Other errors
+                        showError("Registration failed. Please try again later.");
+                    }
+                }
+            } catch (error) {
+                console.error('Error during registration:', error);
+                // Provide more specific network error messages
+                if (error.name === 'TypeError' && error.message.includes('NetworkError')) {
+                    showError("Network error - Please check your internet connection");
+                } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    showError("Cannot connect to server - Please try again later");
+                } else if (error.name === 'AbortError') {
+                    showError("Request was aborted - Please try again");
+                } else {
+                    showError("Registration failed - Please try again later");
+                }
+            }
+        });
+        
+        // Form validation function
+        function validateForm() {
+            let isValid = true;
+            
+            // Required fields validation
+            const requiredFields = [
+                { id: 'fullName', message: 'Full name is required' },
+                { id: 'email', message: 'Email is required' },
+                { id: 'username', message: 'Username is required' },
+                { id: 'password', message: 'Password is required' },
+                { id: 'address', message: 'Address is required' },
+                { id: 'phoneNumber', message: 'Phone is required' },
+                { id: 'doB', message: 'Date of birth is required' }
+            ];
+            
+            // Check empty fields
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field.id);
+                const value = element.value.trim();
+                if (!value) {
+                    showError(field.message);
+                    isValid = false;
+                    element.classList.add('is-invalid');
+                    
+                    // Add invalid feedback directly to the field
+                    const feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback d-block';
+                    feedback.textContent = field.message;
+                    feedback.id = `${field.id}-feedback`;
+                    
+                    // Remove any existing feedback first
+                    const existing = document.getElementById(`${field.id}-feedback`);
+                    if (existing) existing.remove();
+                    
+                    // Add after the input
+                    element.parentNode.appendChild(feedback);
+                } else {
+                    element.classList.remove('is-invalid');
+                    const existingFeedback = document.getElementById(`${field.id}-feedback`);
+                    if (existingFeedback) {
+                        existingFeedback.remove();
+                    }
+                }
+            });
+            
+            // Username format validation
+            const username = document.getElementById('username').value.trim();
+            if (username && !/^[a-zA-Z0-9_]+$/.test(username)) {
+                showError('Username cannot contain special characters');
+                isValid = false;
+            }
+            
+            // Username length validation
+            if (username && username.length > 50) {
+                showError('Username must be between 1 and 50 characters');
+                isValid = false;
+            }
+            
+            // Email format validation
+            const email = document.getElementById('email').value.trim();
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showError('Must be a valid email address');
+                isValid = false;
+            }
+            
+            // Phone validation
+            const phone = document.getElementById('phoneNumber').value.trim();
+            if (phone) {
+                if (!/^\d+$/.test(phone)) {
+                    showError('Phone must be number');
+                    isValid = false;
+                } else if (phone.length < 9 || phone.length > 10) {
+                    showError('Phone must be 9-10 characters');
+                    isValid = false;
+                }
+            }
+            
+            // DOB validation
+            const dob = document.getElementById('doB').value;
+            if (dob) {
+                const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                if (!dateRegex.test(dob)) {
+                    showError('Invalid date format');
+                    isValid = false;
+                }
+            }
+            
+            return isValid;
+        }
+        
+        // Function to show error messages
+        function showError(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            const errorList = document.getElementById('errorList');
+            const errorItems = document.getElementById('errorItems');
+            
+            // Create a professional error message with icon (div format)
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'd-flex align-items-center mb-2';
+            errorDiv.innerHTML = `
+                <i class="bi bi-exclamation-circle-fill me-2"></i>
+                <span class="text-start">${message}</span>
+            `;
+            
+            // Add data-test-error attribute for Selenium testing
+            errorDiv.setAttribute('data-test-error', message.trim());
+            
+            // Also create a list item element for backward compatibility with tests
+            const listItem = document.createElement('li');
+            listItem.textContent = message;
+            listItem.setAttribute('data-test-error', message.trim());
+            listItem.className = 'text-danger text-start';
+            listItem.style.display = 'none'; // Hide the li element from users, but keep it in DOM for tests
+            
+            // Add specific ID for username required error for Selenium
+            if (message.includes('Username is required')) {
+                errorDiv.id = 'username-required-error-div';
+                listItem.id = 'username-required-error';
+            }
+            
+            // Add both elements
+            errorItems.appendChild(errorDiv);
+            errorList.appendChild(listItem);
+            
+            // Show the error container
+            errorContainer.classList.remove('d-none');
+            
+            // Log for debugging
+            console.log(`Error displayed: "${message}"`);
+        }
     });
 </script>
 
-<!--lib-->
+<!--Lib-->
 <script src="../../jquery/jquery.min.js"></script>
 <script src="../../lib/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="../../lib/wow/wow.min.js"></script>
@@ -110,5 +470,7 @@
 <script src="../../lib/tempusdominus/js/moment.min.js"></script>
 <script src="../../lib/tempusdominus/js/moment-timezone.min.js"></script>
 <script src="../../js/tempusdominus-bootstrap-4.min.js"></script>
+<!-- Error mapper utility -->
+<script src="../../js/error-mapper.js"></script>
 </body>
 </html>

@@ -106,7 +106,11 @@ public class AuthController {
                                @RequestParam("doB") String doB,
                                Model model) {
         log.info("Received Registration Request: fullName={}, username={}, email={}, password={}, address={}, phoneNumber={}, doB={}",
-                fullName, username, email, password, address, phoneNumber, doB);
+                fullName, username, email, "********", address, phoneNumber, doB);
+        
+        // This handler is for traditional form submission
+        // For AJAX requests, clients will call the backend API directly
+        
         // Validate input
         if (fullName.isEmpty() || username.isEmpty() || email.isEmpty()||phoneNumber.isEmpty() || password.isEmpty() || address.isEmpty() || doB.isEmpty()) {
             model.addAttribute("errors", List.of("All fields are required."));
@@ -132,11 +136,20 @@ public class AuthController {
 
         // Gọi phương thức register
         try {
-            String successMessage = authApiService.register(registerRequest);
-            model.addAttribute("message", successMessage);
-            return "redirect:/auth/login";
+            String response = authApiService.register(registerRequest);
+            
+            // Check if the response contains an error message
+            if (response.contains("Username is already taken") || response.contains("error")) {
+                // This is an error response
+                model.addAttribute("errors", List.of(response));
+                return "auth/register";
+            }
+            
+            // Success response
+            model.addAttribute("message", "Registration successful! Please log in.");
+            return "redirect:/auth/login?registered=true";
         } catch (Exception e) {
-            model.addAttribute("errors", List.of("Registration failed. Please try again."));
+            model.addAttribute("errors", List.of("Registration failed: " + e.getMessage()));
             log.error("Registration failed: {}", e.getMessage());
             return "auth/register";
         }
